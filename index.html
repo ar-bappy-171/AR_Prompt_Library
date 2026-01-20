@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Vault - Your AI Prompt Library</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💾</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="logo-container">
+                <h1><i class="fas fa-robot"></i> Prompt Vault</h1>
+                <p class="tagline">Your personal AI prompt library & organizer</p>
+            </div>
+            
+            <div class="header-controls">
+                <button id="templatesBtn" class="btn btn-secondary" title="Manage prompt templates">
+                    <i class="fas fa-file-alt"></i> Templates
+                </button>
+                <button id="importBtn" class="btn btn-secondary">
+                    <i class="fas fa-file-import"></i> Import
+                </button>
+                <button id="exportBtn" class="btn btn-secondary">
+                    <i class="fas fa-file-export"></i> Export
+                </button>
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Sidebar for Categories -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-folder"></i> Categories</h3>
+                    <ul id="categoryList" class="category-list">
+                        <li data-category="favorites" role="button" aria-label="Filter by favorites" class="active">
+                            <i class="fas fa-heart"></i> Favorites
+                        </li>
+                        <li data-category="art">Art & Images</li>
+                        <li data-category="writing">Writing</li>
+                        <li data-category="code">Code & Technical</li>
+                        <li data-category="analysis">Analysis</li>
+                        <li data-category="creative">Creative</li>
+                        <li data-category="other">Other</li>
+                    </ul>
+                    
+                    <div class="add-category">
+                        <input type="text" id="newCategory" placeholder="Add new category...">
+                        <button id="addCategoryBtn" class="btn-icon"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section stats">
+                    <h3><i class="fas fa-chart-bar"></i> Statistics</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Prompts:</span>
+                        <span id="totalPrompts" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Favorites:</span>
+                        <span id="totalFavorites" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Categories:</span>
+                        <span id="totalCategories" class="stat-value">7</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">With Images:</span>
+                        <span id="promptsWithImages" class="stat-value">0</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Prompt Area -->
+            <section class="prompt-section">
+                <!-- Search and Add Prompt -->
+                <div class="prompt-controls">
+                    <div class="search-container">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                        <input type="text" id="searchInput" placeholder="Search prompts..." 
+                               aria-label="Search prompts by title, text, or tags"
+                               aria-controls="searchSuggestions">
+                        <div id="searchSuggestions" class="search-suggestions" role="listbox" aria-label="Search suggestions"></div>
+                    </div>
+                    <div class="view-controls">
+                        <button id="listViewBtn" class="btn-icon" title="List View" aria-label="Switch to list view" aria-pressed="false">
+                            <i class="fas fa-list"></i>
+                        </button>
+                        <button id="gridViewBtn" class="btn-icon active" title="Grid View" aria-label="Switch to grid view" aria-pressed="true">
+                            <i class="fas fa-th"></i>
+                        </button>
+                        <button id="themeToggle" class="btn-icon" title="Toggle Theme" aria-label="Toggle dark/light theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button id="statsBtn" class="btn-icon" title="View Statistics" aria-label="View library statistics">
+                            <i class="fas fa-chart-bar"></i>
+                        </button>
+                    </div>
+                    <button id="addPromptBtn" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Add New Prompt
+                    </button>
+                </div>
+
+                <!-- Prompt Grid -->
+                <div id="promptGrid" class="prompt-grid">
+                    <!-- Prompts will be dynamically added here -->
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-icon">
+                            <i class="fas fa-comment-dots"></i>
+                        </div>
+                        <h3>No prompts yet</h3>
+                        <p>Add your first prompt to start building your library!</p>
+                        <button id="addFirstPromptBtn" class="btn btn-primary">
+                            <i class="fas fa-plus-circle"></i> Add First Prompt
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add/Edit Prompt Modal -->
+    <div id="promptModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Prompt</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="promptForm">
+                    <div class="form-group">
+                        <label for="promptTitle"><i class="fas fa-heading"></i> Prompt Title *</label>
+                        <input type="text" id="promptTitle" required placeholder="Enter a descriptive title">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="promptCategory"><i class="fas fa-folder"></i> Category *</label>
+                            <select id="promptCategory" required>
+                                <option value="">Select category</option>
+                                <option value="art">Art & Images</option>
+                                <option value="writing">Writing</option>
+                                <option value="code">Code & Technical</option>
+                                <option value="analysis">Analysis</option>
+                                <option value="creative">Creative</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="promptTags"><i class="fas fa-tags"></i> Tags (comma separated)</label>
+                            <input type="text" id="promptTags" placeholder="e.g., portrait, realistic, detailed">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="promptText"><i class="fas fa-comment-alt"></i> Prompt Text *</label>
+                        <textarea id="promptText" rows="6" required placeholder="Enter your prompt here..."></textarea>
+                        <div class="char-count">
+                            <span id="charCount">0</span> characters
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-image"></i> Result Reference Images (2-3 images showing output)</label>
+                        <div class="image-upload-area" id="resultImageArea">
+                            <div class="image-upload-box" data-type="result">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Result Image 1</span>
+                                <input type="file" class="image-input" accept="image/*" data-index="0" data-type="result">
+                            </div>
+                            <div class="image-upload-box" data-type="result">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Result Image 2</span>
+                                <input type="file" class="image-input" accept="image/*" data-index="1" data-type="result">
+                            </div>
+                            <div class="image-upload-box" data-type="result">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Result Image 3</span>
+                                <input type="file" class="image-input" accept="image/*" data-index="2" data-type="result">
+                            </div>
+                        </div>
+                        <p class="help-text">Upload images that show what this prompt generates</p>
+                        
+                        <div class="image-url-section" style="margin-top: 1rem;">
+                            <label for="resultImageUrl"><i class="fas fa-link"></i> Or use image URL</label>
+                            <div class="input-group" style="display: flex; gap: 0.5rem;">
+                                <input type="url" id="resultImageUrl" placeholder="https://example.com/image.jpg" style="flex: 1;">
+                                <button type="button" id="addResultImageUrlBtn" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">
+                                    <i class="fas fa-check"></i> Load
+                                </button>
+                            </div>
+                            <p class="help-text">Paste the full URL of an image from the internet</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-file-upload"></i> Input Reference Image (Optional)</label>
+                        <p class="help-text">Show what kind of input image might be needed for this prompt</p>
+                        <div class="image-upload-area" id="inputImageArea">
+                            <div class="image-upload-box" data-type="input">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Input Reference</span>
+                                <input type="file" class="image-input" accept="image/*" data-index="0" data-type="input">
+                            </div>
+                        </div>
+                        
+                        <div class="image-url-section" style="margin-top: 1rem;">
+                            <label for="inputImageUrl"><i class="fas fa-link"></i> Or use image URL</label>
+                            <div class="input-group" style="display: flex; gap: 0.5rem;">
+                                <input type="url" id="inputImageUrl" placeholder="https://example.com/image.jpg" style="flex: 1;">
+                                <button type="button" id="addImageUrlBtn" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">
+                                    <i class="fas fa-check"></i> Load
+                                </button>
+                            </div>
+                            <p class="help-text">Paste the full URL of an image from the internet</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="promptNotes"><i class="fas fa-sticky-note"></i> Notes (Optional)</label>
+                        <textarea id="promptNotes" rows="3" placeholder="Add any additional notes, parameters, or tips for this prompt..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="promptRating"><i class="fas fa-star"></i> Effectiveness Rating</label>
+                        <div class="rating-input" id="ratingInput">
+                            <input type="hidden" id="promptRating" value="0">
+                            <div class="stars">
+                                <button type="button" class="star" data-value="1" title="Poor"><i class="fas fa-star"></i></button>
+                                <button type="button" class="star" data-value="2" title="Fair"><i class="fas fa-star"></i></button>
+                                <button type="button" class="star" data-value="3" title="Good"><i class="fas fa-star"></i></button>
+                                <button type="button" class="star" data-value="4" title="Very Good"><i class="fas fa-star"></i></button>
+                                <button type="button" class="star" data-value="5" title="Excellent"><i class="fas fa-star"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="savePromptBtn">Save Prompt</button>
+                    </div>
+                    
+                    <input type="hidden" id="promptId">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content image-modal">
+            <div class="modal-header">
+                <h3 id="imageModalTitle">Image Preview</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <img id="modalImage" src="" alt="Preview">
+                <div class="image-info" id="imageInfo"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prompt Details Modal -->
+    <div id="promptDetailsModal" class="modal">
+        <div class="modal-content details-modal">
+            <div class="modal-header">
+                <h3>Prompt Details</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Content will be populated dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="document.querySelector('#promptDetailsModal .close-modal').click()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button id="fabButton" class="fab-button" title="Add new prompt (Ctrl+N)" aria-label="Add new prompt">
+        <i class="fas fa-plus" aria-hidden="true"></i>
+    </button>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <i class="fas fa-check-circle toast-icon"></i>
+            <span class="toast-message">Prompt copied to clipboard!</span>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content confirm-modal">
+            <div class="modal-header">
+                <h3 id="confirmTitle">Confirm Action</h3>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure you want to delete this prompt?</p>
+            </div>
+            <div class="modal-actions">
+                <button id="confirmCancel" class="btn btn-secondary">Cancel</button>
+                <button id="confirmOk" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Modal -->
+    <div id="statsModal" class="modal">
+        <div class="modal-content stats-modal">
+            <div class="modal-header">
+                <h2>Prompt Library Statistics</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4><i class="fas fa-comments"></i> Total Prompts</h4>
+                        <p id="statTotalPrompts" class="stat-number">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4><i class="fas fa-tags"></i> Total Tags</h4>
+                        <p id="statTotalTags" class="stat-number">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4><i class="fas fa-image"></i> With Images</h4>
+                        <p id="statPromptsWithImages" class="stat-number">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4><i class="fas fa-folder"></i> Categories Used</h4>
+                        <p id="statCategoriesUsed" class="stat-number">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4><i class="fas fa-font"></i> Avg Words</h4>
+                        <p id="statAvgWords" class="stat-number">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4><i class="fas fa-star"></i> Avg Rating</h4>
+                        <p id="statAvgRating" class="stat-number">0/5</p>
+                    </div>
+                </div>
+                <div class="stats-details">
+                    <h3>Category Breakdown</h3>
+                    <div id="categoryBreakdown" class="category-breakdown"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Templates Modal -->
+    <div id="templatesModal" class="modal">
+        <div class="modal-content templates-modal">
+            <div class="modal-header">
+                <h2>Prompt Templates</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="templates-list" id="templatesList">
+                    <!-- Templates will be populated here -->
+                </div>
+                <div class="templates-actions">
+                    <button class="btn btn-primary" id="createTemplateBtn">
+                        <i class="fas fa-plus"></i> Create Template from Current
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
