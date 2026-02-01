@@ -4,6 +4,8 @@ AI Prompt Management System
 
 ## Overview
 
+Check it out :-- 
+
 ## Quick Start
 
 1. Open `index.html` in your browser
@@ -47,3 +49,4 @@ AI Prompt Management System
 - **Local Storage**: All data stored locally in your browser - no server required
 - **Rating System**: Rate prompts by effectiveness (1-5 stars)
 - **Image Support**: Add reference images to prompts
+
