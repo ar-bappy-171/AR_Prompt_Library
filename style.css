@@ -2319,8 +2319,8 @@ small {
 }
 
 .image-thumb {
-    width: 60px;
-    height: 60px;
+    width: 100px;
+    height: 100px;
     border-radius: var(--border-radius-sm);
     object-fit: cover;
     cursor: pointer;
@@ -2490,4 +2490,5 @@ small {
 .section-header-actions {
     display: flex;
     gap: 0.25rem;
+
 }
