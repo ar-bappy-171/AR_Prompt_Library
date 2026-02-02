@@ -2320,7 +2320,7 @@ small {
 
 .image-thumb {
     width: 100px;
-    height: 155px;
+    height: 165px;
     border-radius: var(--border-radius-sm);
     object-fit: cover;
     cursor: pointer;
@@ -2492,5 +2492,6 @@ small {
     gap: 0.25rem;
 
 }
+
 
 
