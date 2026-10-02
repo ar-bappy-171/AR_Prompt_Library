@@ -4,6 +4,7 @@ import * as React from "react";
 import {
   Copy,
   Check,
+  FolderPlus,
   GripVertical,
   Heart,
   MoreHorizontal,
@@ -68,6 +69,7 @@ export function PromptCard({ prompt }: PromptCardProps) {
   const deletePrompt = useVaultStore((s) => s.deletePrompt);
   const duplicatePrompt = useVaultStore((s) => s.duplicatePrompt);
   const requestConfirm = useVaultStore((s) => s.requestConfirm);
+  const openAddToCollection = useVaultStore((s) => s.openAddToCollection);
   const selectionMode = useVaultStore((s) => s.selectionMode);
   const selected = useVaultStore((s) => s.selected);
   const toggleSelected = useVaultStore((s) => s.toggleSelected);
@@ -181,6 +183,10 @@ export function PromptCard({ prompt }: PromptCardProps) {
             onSelect={(e) => {
               e.stopPropagation();
               toggleSelected(prompt.id);
+            }}
+            onAddToCollection={(e) => {
+              e.stopPropagation();
+              openAddToCollection(prompt.id);
             }}
           />
         </div>
@@ -296,6 +302,7 @@ function CardMenu(props: {
   onShare: (e: React.MouseEvent) => void;
   onDuplicate: (e: React.MouseEvent) => void;
   onSelect: (e: React.MouseEvent) => void;
+  onAddToCollection: (e: React.MouseEvent) => void;
 }) {
   return (
     <DropdownMenu>
@@ -316,6 +323,9 @@ function CardMenu(props: {
         </DropdownMenuItem>
         <DropdownMenuItem onClick={props.onDuplicate}>
           <CopyPlus className="size-4" /> Duplicate
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={props.onAddToCollection}>
+          <FolderPlus className="size-4" /> Add to collection
         </DropdownMenuItem>
         <DropdownMenuItem onClick={props.onShare}>
           <Share2 className="size-4" /> Share

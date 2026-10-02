@@ -6,6 +6,7 @@ import {
   Check,
   Copy,
   Flame,
+  FolderPlus,
   Heart,
   History,
   Pencil,
@@ -36,12 +37,17 @@ export function PromptDetailsDialog() {
   const toggleFavorite = useVaultStore((s) => s.toggleFavorite);
   const registerCopy = useVaultStore((s) => s.registerCopy);
   const openEditor = useVaultStore((s) => s.openEditor);
+  const openAddToCollection = useVaultStore((s) => s.openAddToCollection);
+  const collections = useVaultStore((s) => s.collections);
 
   const prompt = detailsId ? prompts.find((p) => p.id === detailsId) : null;
   const [copied, setCopied] = React.useState(false);
   const [lightbox, setLightbox] = React.useState<string | null>(null);
   const cat = prompt ? categoryById(categories, prompt.category) : null;
   const isFav = prompt ? favorites.includes(prompt.id) : false;
+  const inCollections = prompt
+    ? collections.filter((c) => c.promptIds.includes(prompt.id)).length
+    : 0;
 
   const handleCopy = async () => {
     if (!prompt) return;
@@ -193,6 +199,19 @@ export function PromptDetailsDialog() {
                 >
                   <Heart className={cn("size-4", isFav && "fill-amber-500 text-amber-500")} />
                   {isFav ? "Favorited" : "Favorite"}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="gap-1.5"
+                  onClick={() => openAddToCollection(prompt.id)}
+                >
+                  <FolderPlus className="size-4" />
+                  <span className="hidden sm:inline">Collections</span>
+                  {inCollections > 0 && (
+                    <span className="rounded-full bg-primary/10 px-1.5 text-[11px] font-semibold text-primary">
+                      {inCollections}
+                    </span>
+                  )}
                 </Button>
                 <Button
                   variant="outline"

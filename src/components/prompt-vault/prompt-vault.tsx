@@ -6,17 +6,23 @@ import { toast } from "sonner";
 import { useVaultStore } from "@/lib/prompt-vault/store";
 import { cn } from "@/lib/utils";
 import { AnalyticsDialog } from "./analytics-dialog";
+import { AddToCollectionDialog } from "./add-to-collection-dialog";
 import { CategoriesDialog } from "./categories-dialog";
 import { CategoryChips } from "./category-chips";
+import { CollectionDetailDialog } from "./collection-detail-dialog";
+import { CollectionsDialog } from "./collections-dialog";
 import { ConfirmDialog } from "./confirm-dialog";
+import { LockScreen } from "./lock-screen";
 import { MobileNav } from "./mobile-nav";
 import { PromptDetailsDialog } from "./prompt-details-dialog";
 import { PromptEditorDialog } from "./prompt-editor-dialog";
 import { PromptGallery } from "./prompt-gallery";
 import { ShortcutsDialog } from "./shortcuts-dialog";
+import { SecurityDialog } from "./security-dialog";
 import { Sidebar } from "./sidebar";
 import { TemplatesDialog } from "./templates-dialog";
 import { Topbar } from "./topbar";
+import { InstallAppButton } from "./pwa";
 
 export function PromptVault() {
   const undo = useVaultStore((s) => s.undo);
@@ -26,13 +32,30 @@ export function PromptVault() {
   const importBundle = useVaultStore((s) => s.importBundle);
   const requestConfirm = useVaultStore((s) => s.requestConfirm);
   const markHydrated = useVaultStore((s) => s.markHydrated);
+  const locked = useVaultStore((s) => s.locked);
+  const security = useVaultStore((s) => s.security);
+  const setCollectionsOpen = useVaultStore((s) => s.setCollectionsOpen);
 
   /* mounted flag → avoids SSR/client hydration mismatch with persisted store */
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => {
     setMounted(true);
     markHydrated();
-  }, [markHydrated]);
+    /* PWA shortcut deep-links: /?action=new | /?action=collections */
+    const action = new URLSearchParams(window.location.search).get("action");
+    if (action === "new") openEditor(null);
+    if (action === "collections") setCollectionsOpen(true);
+  }, [markHydrated, openEditor, setCollectionsOpen]);
+
+  /* auto-lock when the tab is hidden (privacy) */
+  React.useEffect(() => {
+    if (!security?.pinHash) return;
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") useVaultStore.getState().lock();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, [security?.pinHash]);
 
   /* global shortcuts */
   React.useEffect(() => {
@@ -98,6 +121,11 @@ export function PromptVault() {
     [importBundle, requestConfirm]
   );
 
+  /* privacy lock — block everything while locked */
+  if (mounted && locked) {
+    return <LockScreen />;
+  }
+
   return (
     <div className="app-bg relative flex min-h-dvh flex-col">
       {/* a11y skip link */}
@@ -134,6 +162,10 @@ export function PromptVault() {
       <AnalyticsDialog />
       <TemplatesDialog />
       <CategoriesDialog />
+      <CollectionsDialog />
+      <CollectionDetailDialog />
+      <AddToCollectionDialog />
+      <SecurityDialog />
       <ShortcutsDialog />
       <ConfirmDialog />
 
@@ -166,24 +198,40 @@ function GallerySkeleton() {
 function Footer({ onShortcuts }: { onShortcuts: () => void }) {
   return (
     <footer className="mt-auto border-t bg-card/40">
-      <div className="mx-auto flex w-full max-w-[1600px] flex-wrap items-center justify-between gap-2 px-4 py-4 sm:px-6 lg:px-8">
-        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <ShieldCheck className="size-3.5 text-primary" aria-hidden="true" />
-          <span>
-            <strong className="font-semibold text-foreground">Prompt Vault</strong> — everything is
-            stored privately in your browser.
+      <div className="mx-auto flex w-full max-w-[1600px] flex-wrap items-center justify-between gap-2 px-4 pt-4 pb-24 sm:px-6 lg:px-8 lg:pb-4">
+        <div className="flex items-center gap-2">
+          {/* the app's own icon — same asset used for favicon / PWA */}
+          <img
+            src="/icon-192.png"
+            alt="Prompt Vault app icon"
+            className="size-6 rounded-md shadow-sm"
+            width={24}
+            height={24}
+          />
+          <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <ShieldCheck className="size-3.5 text-primary" aria-hidden="true" />
+            <span>
+              <strong className="font-semibold text-foreground">Prompt Vault</strong> — everything
+              is stored privately in your browser.
+            </span>
+          </p>
+          <span className="rounded-full border bg-background px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+            v2.1
           </span>
-        </p>
-        <button
-          type="button"
-          onClick={onShortcuts}
-          className={cn(
-            "flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          )}
-        >
-          <Keyboard className="size-3.5" aria-hidden="true" />
-          Keyboard shortcuts
-        </button>
+        </div>
+        <div className="flex items-center gap-2">
+          <InstallAppButton />
+          <button
+            type="button"
+            onClick={onShortcuts}
+            className={cn(
+              "flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            )}
+          >
+            <Keyboard className="size-3.5" aria-hidden="true" />
+            Keyboard shortcuts
+          </button>
+        </div>
       </div>
     </footer>
   );

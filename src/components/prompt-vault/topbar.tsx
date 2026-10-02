@@ -4,10 +4,13 @@ import * as React from "react";
 import {
   ArrowDownWideNarrow,
   Grid2x2,
+  Image as ImageIcon,
   List,
+  Lock,
   Moon,
   Redo2,
   Search,
+  ShieldCheck,
   Sun,
   Undo2,
   Vault,
@@ -51,6 +54,9 @@ export function Topbar() {
   const past = useVaultStore((s) => s.past.length);
   const future = useVaultStore((s) => s.future.length);
   const openEditor = useVaultStore((s) => s.openEditor);
+  const hasPin = Boolean(useVaultStore((s) => s.security?.pinHash));
+  const lock = useVaultStore((s) => s.lock);
+  const setSecurityOpen = useVaultStore((s) => s.setSecurityOpen);
 
   const searchRef = React.useRef<HTMLInputElement>(null);
 
@@ -85,6 +91,30 @@ export function Topbar() {
         </h1>
         <div className="ml-auto flex items-center gap-1">
           <UndoRedoButtons undo={undo} redo={redo} past={past} future={future} compact />
+          {hasPin && (
+            <Button
+              variant="ghost"
+              size="iconSm"
+              className="size-9 text-muted-foreground hover:text-foreground lg:size-8"
+              onClick={lock}
+              aria-label="Lock vault now"
+              title="Lock now"
+            >
+              <Lock className="size-4" />
+            </Button>
+          )}
+          {!hasPin && (
+            <Button
+              variant="ghost"
+              size="iconSm"
+              className="size-9 text-muted-foreground hover:text-foreground lg:size-8"
+              onClick={() => setSecurityOpen(true)}
+              aria-label="Privacy lock settings"
+              title="Privacy lock"
+            >
+              <ShieldCheck className="size-4" />
+            </Button>
+          )}
           <ThemeToggle />
         </div>
       </div>
@@ -121,6 +151,18 @@ export function Topbar() {
           {/* Desktop-only undo/redo + theme */}
           <div className="hidden items-center gap-1 lg:flex">
             <UndoRedoButtons undo={undo} redo={redo} past={past} future={future} />
+            {hasPin ? (
+              <Button
+                variant="ghost"
+                size="iconSm"
+                className="size-8 text-muted-foreground hover:text-foreground"
+                onClick={lock}
+                aria-label="Lock vault now"
+                title="Lock now"
+              >
+                <Lock className="size-4" />
+              </Button>
+            ) : null}
             <ThemeToggle />
           </div>
 
@@ -158,6 +200,9 @@ export function Topbar() {
           >
             <ViewButton active={view === "grid"} onClick={() => setView("grid")} label="Grid view">
               <Grid2x2 className="size-4" />
+            </ViewButton>
+            <ViewButton active={view === "cover"} onClick={() => setView("cover")} label="Cover view">
+              <ImageIcon className="size-4" />
             </ViewButton>
             <ViewButton active={view === "list"} onClick={() => setView("list")} label="List view">
               <List className="size-4" />

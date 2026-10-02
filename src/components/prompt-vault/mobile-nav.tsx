@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { BarChart3, Heart, Library, Plus, Sparkles } from "lucide-react";
+import { BarChart3, BookOpen, Heart, Library, Plus, Sparkles } from "lucide-react";
 import { useVaultStore } from "@/lib/prompt-vault/store";
 import { cn } from "@/lib/utils";
 
@@ -11,7 +11,9 @@ export function MobileNav() {
   const openEditor = useVaultStore((s) => s.openEditor);
   const setTemplatesOpen = useVaultStore((s) => s.setTemplatesOpen);
   const setAnalyticsOpen = useVaultStore((s) => s.setAnalyticsOpen);
+  const setCollectionsOpen = useVaultStore((s) => s.setCollectionsOpen);
   const favorites = useVaultStore((s) => s.favorites);
+  const collections = useVaultStore((s) => s.collections);
 
   const item = (
     active: boolean,
@@ -26,7 +28,7 @@ export function MobileNav() {
       aria-label={label}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "relative flex h-full flex-col items-center justify-center gap-0.5 px-2 transition-colors",
+        "relative flex h-full flex-col items-center justify-center gap-0.5 px-0.5 transition-colors",
         active ? "text-primary" : "text-muted-foreground active:text-foreground"
       )}
     >
@@ -38,8 +40,8 @@ export function MobileNav() {
           </span>
         )}
       </span>
-      <span className="text-[10px] font-medium">{label}</span>
-      {active && <span className="absolute inset-x-6 top-0 h-0.5 rounded-full bg-primary" />}
+      <span className="text-[10px] leading-none font-medium">{label}</span>
+      {active && <span className="absolute inset-x-4 top-0 h-0.5 rounded-full bg-primary" />}
     </button>
   );
 
@@ -48,7 +50,17 @@ export function MobileNav() {
       aria-label="Primary"
       className="glass fixed inset-x-0 bottom-0 z-40 border-t pb-safe lg:hidden"
     >
-      <div className="grid h-16 grid-cols-5">
+      {/* Center FAB — anchored to the nav itself so it stays perfectly centered */}
+      <button
+        type="button"
+        onClick={() => openEditor(null)}
+        aria-label="Create new prompt"
+        className="brand-gradient absolute -top-6 left-1/2 z-10 flex size-14 -translate-x-1/2 items-center justify-center rounded-full text-white shadow-lg shadow-primary/40 ring-4 ring-background transition-transform hover:scale-105 active:scale-95"
+      >
+        <Plus className="size-6" strokeWidth={2.4} aria-hidden="true" />
+      </button>
+
+      <div className="grid h-16 grid-cols-6">
         {item(filter === "all", () => setFilter("all"), <Library className="size-5" />, "Prompts")}
         {item(
           filter === "favorites",
@@ -58,19 +70,12 @@ export function MobileNav() {
           favorites.length
         )}
 
-        {/* Center FAB */}
-        <div className="relative flex items-end justify-center">
-          <button
-            type="button"
-            onClick={() => openEditor(null)}
-            aria-label="Create new prompt"
-            className="brand-gradient absolute -top-6 flex size-14 items-center justify-center rounded-full text-white shadow-lg shadow-primary/40 ring-4 ring-background transition-transform hover:scale-105 active:scale-95"
-          >
-            <Plus className="size-6" strokeWidth={2.4} aria-hidden="true" />
-          </button>
-          <span className="pb-2 text-[10px] font-medium text-muted-foreground">New</span>
+        {/* spacer under the FAB */}
+        <div className="flex items-end justify-center pb-2">
+          <span className="text-[10px] font-medium text-muted-foreground">New</span>
         </div>
 
+        {item(false, () => setCollectionsOpen(true), <BookOpen className="size-5" />, "Sets", collections.length)}
         {item(false, () => setTemplatesOpen(true), <Sparkles className="size-5" />, "Templates")}
         {item(false, () => setAnalyticsOpen(true), <BarChart3 className="size-5" />, "Stats")}
       </div>

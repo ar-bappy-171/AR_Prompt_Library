@@ -3,11 +3,13 @@
 import * as React from "react";
 import {
   BarChart3,
+  BookOpen,
   Download,
   Heart,
   Library,
   Plus,
   Settings2,
+  ShieldCheck,
   Sparkles,
   Upload,
   Vault,
@@ -20,6 +22,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useVaultStore } from "@/lib/prompt-vault/store";
 import { cn } from "@/lib/utils";
 import { CategoryIcon } from "./category-icon";
+import { InstallAppButton } from "./pwa";
 import { storageSizeOf } from "@/lib/prompt-vault/utils";
 
 export function GradientWord({
@@ -54,6 +57,10 @@ export function Sidebar() {
   const setTemplatesOpen = useVaultStore((s) => s.setTemplatesOpen);
   const setAnalyticsOpen = useVaultStore((s) => s.setAnalyticsOpen);
   const setCategoriesOpen = useVaultStore((s) => s.setCategoriesOpen);
+  const setCollectionsOpen = useVaultStore((s) => s.setCollectionsOpen);
+  const setSecurityOpen = useVaultStore((s) => s.setSecurityOpen);
+  const collections = useVaultStore((s) => s.collections);
+  const hasPin = Boolean(useVaultStore((s) => s.security?.pinHash));
 
   const counts = React.useMemo(() => {
     const byCat = new Map<string, number>();
@@ -149,7 +156,15 @@ export function Sidebar() {
               favorites.length
             )}
             {navItem("templates", false, () => setTemplatesOpen(true), <Sparkles className="size-4.5" />, "Templates")}
+            {navItem("collections", false, () => setCollectionsOpen(true), <BookOpen className="size-4.5" />, "Collections", collections.length)}
             {navItem("analytics", false, () => setAnalyticsOpen(true), <BarChart3 className="size-4.5" />, "Analytics")}
+            {navItem(
+              "privacy",
+              false,
+              () => setSecurityOpen(true),
+              <ShieldCheck className={cn("size-4.5", hasPin && "text-emerald-500")} />,
+              "Privacy Lock"
+            )}
           </div>
 
           {/* Categories */}
@@ -186,6 +201,7 @@ export function Sidebar() {
 
         {/* Footer */}
         <div className="space-y-3 px-4 py-4">
+          <InstallAppButton className="w-full" />
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -197,11 +213,16 @@ export function Sidebar() {
             </Button>
             <ExportButton />
           </div>
-          <div className="flex items-center justify-between px-1 text-[11px] text-muted-foreground">
+          <div className="flex items-center justify-between gap-2 px-1 text-[11px] text-muted-foreground">
             <Badge variant="secondary" className="gap-1 font-normal">
               <Wand2 className="size-3" /> {size} local
             </Badge>
-            <span>v2.0</span>
+            <Badge
+              variant="secondary"
+              className="gap-1 border-emerald-500/25 bg-emerald-500/10 font-normal text-emerald-600 dark:text-emerald-400"
+            >
+              <ShieldCheck className="size-3" /> v2.1
+            </Badge>
           </div>
         </div>
       </aside>

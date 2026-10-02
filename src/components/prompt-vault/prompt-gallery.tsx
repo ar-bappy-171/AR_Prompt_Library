@@ -44,6 +44,7 @@ import {
 } from "@/lib/prompt-vault/utils";
 import { cn } from "@/lib/utils";
 import { PromptCard } from "./prompt-card";
+import { PromptCoverCard } from "./prompt-cover-card";
 import { PromptListItem } from "./prompt-list-item";
 
 const PAGE_SIZE = 12;
@@ -252,7 +253,7 @@ export function PromptGallery() {
         </div>
       )}
 
-      {/* grid / list */}
+      {/* grid / cover / list */}
       {dragEnabled ? (
         <DndContext
           sensors={sensors}
@@ -261,17 +262,9 @@ export function PromptGallery() {
         >
           <SortableContext
             items={paged.map((p) => p.id)}
-            strategy={view === "grid" ? rectSortingStrategy : verticalListSortingStrategy}
+            strategy={view === "list" ? verticalListSortingStrategy : rectSortingStrategy}
           >
-            {view === "grid" ? (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                {paged.map((p) => (
-                  <SortableCard key={p.id} id={p.id}>
-                    <PromptCard prompt={p} />
-                  </SortableCard>
-                ))}
-              </div>
-            ) : (
+            {view === "list" ? (
               <div className="flex flex-col gap-2.5">
                 {paged.map((p) => (
                   <SortableRow key={p.id} id={p.id}>
@@ -279,19 +272,39 @@ export function PromptGallery() {
                   </SortableRow>
                 ))}
               </div>
+            ) : (
+              <div
+                className={
+                  view === "cover"
+                    ? "grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
+                    : "grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+                }
+              >
+                {paged.map((p) => (
+                  <SortableCard key={p.id} id={p.id}>
+                    {view === "cover" ? <PromptCoverCard prompt={p} /> : <PromptCard prompt={p} />}
+                  </SortableCard>
+                ))}
+              </div>
             )}
           </SortableContext>
         </DndContext>
-      ) : view === "grid" ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          {paged.map((p) => (
-            <PromptCard key={p.id} prompt={p} />
-          ))}
-        </div>
-      ) : (
+      ) : view === "list" ? (
         <div className="flex flex-col gap-2.5">
           {paged.map((p) => (
             <PromptListItem key={p.id} prompt={p} />
+          ))}
+        </div>
+      ) : view === "cover" ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {paged.map((p) => (
+            <PromptCoverCard key={p.id} prompt={p} />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          {paged.map((p) => (
+            <PromptCard key={p.id} prompt={p} />
           ))}
         </div>
       )}

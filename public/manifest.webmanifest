@@ -1,0 +1,32 @@
+{
+  "name": "Prompt Vault — AI Prompt Manager",
+  "short_name": "Prompt Vault",
+  "description": "A beautiful, fast vault for your AI prompts. Organize, search, rate, and reuse your best prompts — private by design.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#16121d",
+  "theme_color": "#7c3aed",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Prompt",
+      "short_name": "New",
+      "description": "Create a new prompt",
+      "url": "/?action=new"
+    },
+    {
+      "name": "Collections",
+      "short_name": "Collections",
+      "description": "Browse your prompt collections",
+      "url": "/?action=collections"
+    }
+  ]
+}

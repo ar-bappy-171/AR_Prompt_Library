@@ -5,9 +5,11 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { DEFAULT_CATEGORIES, FALLBACK_CATEGORY_ID, buildSamplePrompts } from "./data";
 import type {
   Category,
+  Collection,
   ExportBundle,
   Prompt,
   PromptDraft,
+  Security,
   SortKey,
   VaultSnapshot,
   ViewMode,
@@ -29,6 +31,8 @@ interface VaultState extends VaultSnapshot {
   /* persisted prefs */
   view: ViewMode;
   sort: SortKey;
+  security: Security;
+  locked: boolean;
   /* history */
   past: VaultSnapshot[];
   future: VaultSnapshot[];
@@ -47,6 +51,10 @@ interface VaultState extends VaultSnapshot {
   templatesOpen: boolean;
   categoriesOpen: boolean;
   shortcutsOpen: boolean;
+  collectionsOpen: boolean;
+  openCollectionId: string | null;
+  addToCollectionPromptId: string | null;
+  securityOpen: boolean;
   confirm: ConfirmRequest | null;
   importing: boolean;
 
@@ -72,6 +80,18 @@ interface VaultState extends VaultSnapshot {
   updateCategory: (id: string, patch: Partial<Pick<Category, "name" | "color" | "icon">>) => void;
   deleteCategory: (id: string) => void;
 
+  addCollection: (name: string, description: string, color: string) => Collection;
+  updateCollection: (id: string, patch: Partial<Pick<Collection, "name" | "description" | "color">>) => void;
+  deleteCollection: (id: string) => void;
+  togglePromptInCollection: (collectionId: string, promptId: string) => boolean;
+  setCollectionPrompts: (collectionId: string, promptIds: string[]) => void;
+
+  hashPin: (pin: string) => Promise<string>;
+  setPin: (pin: string, hint: string) => Promise<void>;
+  removePin: (pin: string) => Promise<boolean>;
+  unlock: (pin: string) => Promise<boolean>;
+  lock: () => void;
+
   importBundle: (bundle: ExportBundle | { prompts: Prompt[] }, mode: "replace" | "merge") => number;
   loadSample: () => void;
   clearAll: () => void;
@@ -90,6 +110,12 @@ interface VaultState extends VaultSnapshot {
   setTemplatesOpen: (v: boolean) => void;
   setCategoriesOpen: (v: boolean) => void;
   setShortcutsOpen: (v: boolean) => void;
+  setCollectionsOpen: (v: boolean) => void;
+  openCollection: (id: string) => void;
+  closeCollection: () => void;
+  openAddToCollection: (promptId: string) => void;
+  closeAddToCollection: () => void;
+  setSecurityOpen: (v: boolean) => void;
   requestConfirm: (req: ConfirmRequest) => void;
   cancelConfirm: () => void;
   setSelectionMode: (v: boolean) => void;
@@ -104,6 +130,7 @@ const snapshotOf = (s: VaultState): VaultSnapshot => ({
   categories: s.categories,
   favorites: s.favorites,
   customOrder: s.customOrder,
+  collections: s.collections,
 });
 
 export const useVaultStore = create<VaultState>()(
@@ -121,13 +148,15 @@ export const useVaultStore = create<VaultState>()(
       };
 
       const prunePromptRefs = (s: VaultState, ids: Set<string>) => {
-        const idArr = Array.from(ids);
-        const favSet = new Set(s.favorites);
-        idArr.forEach((id) => favSet.delete(id));
         return {
           favorites: s.favorites.filter((id) => !ids.has(id)),
           customOrder: s.customOrder.filter((id) => !ids.has(id)),
           selected: s.selected.filter((id) => !ids.has(id)),
+          collections: s.collections.map((c) =>
+            c.promptIds.some((id) => ids.has(id))
+              ? { ...c, promptIds: c.promptIds.filter((id) => !ids.has(id)) }
+              : c
+          ),
         };
       };
 
@@ -136,8 +165,11 @@ export const useVaultStore = create<VaultState>()(
         categories: DEFAULT_CATEGORIES,
         favorites: [],
         customOrder: [],
+        collections: [],
         view: "grid",
         sort: "newest",
+        security: { pinHash: null, hint: "" },
+        locked: false,
         past: [],
         future: [],
         hydrated: false,
@@ -154,10 +186,15 @@ export const useVaultStore = create<VaultState>()(
         templatesOpen: false,
         categoriesOpen: false,
         shortcutsOpen: false,
+        collectionsOpen: false,
+        openCollectionId: null,
+        addToCollectionPromptId: null,
+        securityOpen: false,
         confirm: null,
         importing: false,
 
-        markHydrated: () => set({ hydrated: true }),
+        markHydrated: () =>
+          set((s) => ({ hydrated: true, locked: Boolean(s.security?.pinHash) })),
         setView: (v) => set({ view: v }),
         setSort: (sort) => set({ sort, page: 1 }),
         setFilter: (filter) => set({ filter, page: 1 }),
@@ -268,6 +305,103 @@ export const useVaultStore = create<VaultState>()(
           }));
         },
 
+        /* ------------------------------ collections ------------------------------ */
+        addCollection: (name, description, color) => {
+          const s = get();
+          const base = slugify(name);
+          let id = base;
+          let i = 2;
+          while (s.collections.some((c) => c.id === id)) id = `${base}-${i++}`;
+          const collection: Collection = {
+            id,
+            name: name.trim(),
+            description: description.trim(),
+            color,
+            promptIds: [],
+            createdAt: new Date().toISOString(),
+          };
+          commit(() => ({ collections: [...get().collections, collection] }));
+          return collection;
+        },
+
+        updateCollection: (id, patch) =>
+          commit((s) => ({
+            collections: s.collections.map((c) => (c.id === id ? { ...c, ...patch } : c)),
+          })),
+
+        deleteCollection: (id) =>
+          commit((s) => ({ collections: s.collections.filter((c) => c.id !== id) })),
+
+        togglePromptInCollection: (collectionId, promptId) => {
+          let added = false;
+          set((s) => ({
+            collections: s.collections.map((c) => {
+              if (c.id !== collectionId) return c;
+              if (c.promptIds.includes(promptId)) {
+                added = false;
+                return { ...c, promptIds: c.promptIds.filter((x) => x !== promptId) };
+              }
+              added = true;
+              return { ...c, promptIds: [...c.promptIds, promptId] };
+            }),
+          }));
+          return added;
+        },
+
+        setCollectionPrompts: (collectionId, promptIds) =>
+          commit((s) => ({
+            collections: s.collections.map((c) =>
+              c.id === collectionId ? { ...c, promptIds } : c
+            ),
+          })),
+
+        /* ------------------------------ privacy lock ----------------------------- */
+        hashPin: async (pin) => {
+          const data = new TextEncoder().encode(`prompt-vault::${pin}`);
+          try {
+            if (typeof crypto !== "undefined" && crypto.subtle) {
+              const buf = await crypto.subtle.digest("SHA-256", data);
+              return Array.from(new Uint8Array(buf))
+                .map((b) => b.toString(16).padStart(2, "0"))
+                .join("");
+            }
+          } catch {
+            /* fall through to fallback */
+          }
+          let h = 2166136261;
+          for (const b of data) {
+            h ^= b;
+            h = Math.imul(h, 16777619);
+          }
+          return (h >>> 0).toString(16);
+        },
+
+        setPin: async (pin, hint) => {
+          const pinHash = await get().hashPin(pin);
+          set({ security: { pinHash, hint: hint.trim() }, locked: false });
+        },
+
+        removePin: async (pin) => {
+          const s = get();
+          const h = await s.hashPin(pin);
+          if (!s.security?.pinHash || h !== s.security.pinHash) return false;
+          set({ security: { pinHash: null, hint: "" }, locked: false });
+          return true;
+        },
+
+        unlock: async (pin) => {
+          const s = get();
+          if (!s.security?.pinHash) return true;
+          const h = await s.hashPin(pin);
+          if (h !== s.security.pinHash) return false;
+          set({ locked: false });
+          return true;
+        },
+
+        lock: () => {
+          if (get().security?.pinHash) set({ locked: true });
+        },
+
         importBundle: (bundle, mode) => {
           const incomingPrompts = Array.isArray(bundle.prompts) ? bundle.prompts : [];
           if (incomingPrompts.length === 0) return 0;
@@ -279,6 +413,8 @@ export const useVaultStore = create<VaultState>()(
             "favorites" in bundle && Array.isArray(bundle.favorites) ? bundle.favorites : [];
           const customOrder =
             "customOrder" in bundle && Array.isArray(bundle.customOrder) ? bundle.customOrder : [];
+          const incomingCollections =
+            "collections" in bundle && Array.isArray(bundle.collections) ? bundle.collections : [];
 
           commit((s) => {
             if (mode === "replace") {
@@ -287,6 +423,7 @@ export const useVaultStore = create<VaultState>()(
                 categories,
                 favorites,
                 customOrder,
+                collections: incomingCollections,
                 page: 1,
               };
             }
@@ -309,10 +446,17 @@ export const useVaultStore = create<VaultState>()(
                 usageCount: Number(p.usageCount) || 0,
               }));
             const catIds = new Set(categories.map((c) => c.id));
+            const mergedCollections = [
+              ...s.collections,
+              ...incomingCollections.filter(
+                (c) => c && c.id && !s.collections.some((x) => x.id === c.id)
+              ),
+            ];
             return {
               prompts: [...merged, ...s.prompts],
               categories: [...s.categories, ...categories.filter((c) => !s.categories.some((x) => x.id === c.id) && catIds.has(c.id))],
               favorites: Array.from(new Set([...s.favorites, ...favorites])),
+              collections: mergedCollections,
               page: 1,
             };
           });
@@ -329,6 +473,7 @@ export const useVaultStore = create<VaultState>()(
             prompts: [],
             favorites: [],
             customOrder: [],
+            collections: [],
             page: 1,
             selectionMode: false,
             selected: [],
@@ -338,12 +483,13 @@ export const useVaultStore = create<VaultState>()(
           const s = get();
           return {
             app: "prompt-vault" as const,
-            version: 1,
+            version: 2,
             exportedAt: new Date().toISOString(),
             prompts: s.prompts,
             categories: s.categories,
             favorites: s.favorites,
             customOrder: s.customOrder,
+            collections: s.collections,
           };
         },
 
@@ -382,6 +528,12 @@ export const useVaultStore = create<VaultState>()(
         setTemplatesOpen: (v) => set({ templatesOpen: v }),
         setCategoriesOpen: (v) => set({ categoriesOpen: v }),
         setShortcutsOpen: (v) => set({ shortcutsOpen: v }),
+        setCollectionsOpen: (v) => set({ collectionsOpen: v }),
+        openCollection: (id) => set({ openCollectionId: id }),
+        closeCollection: () => set({ openCollectionId: null }),
+        openAddToCollection: (promptId) => set({ addToCollectionPromptId: promptId }),
+        closeAddToCollection: () => set({ addToCollectionPromptId: null }),
+        setSecurityOpen: (v) => set({ securityOpen: v }),
         requestConfirm: (req) => set({ confirm: req }),
         cancelConfirm: () => set({ confirm: null }),
 
@@ -405,8 +557,10 @@ export const useVaultStore = create<VaultState>()(
         categories: s.categories,
         favorites: s.favorites,
         customOrder: s.customOrder,
+        collections: s.collections,
         view: s.view,
         sort: s.sort,
+        security: s.security,
       }),
       onRehydrateStorage: () => (state) => {
         state?.markHydrated();

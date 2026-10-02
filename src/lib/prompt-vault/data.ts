@@ -3,6 +3,19 @@ import { generateId } from "./utils";
 
 export const FALLBACK_CATEGORY_ID = "other";
 
+/** Preset accent colors for collections / playbooks. */
+export const COLLECTION_COLORS = [
+  "#8b5cf6",
+  "#d946ef",
+  "#f43f5e",
+  "#f97316",
+  "#f59e0b",
+  "#84cc16",
+  "#10b981",
+  "#14b8a6",
+  "#ec4899",
+] as const;
+
 export const DEFAULT_CATEGORIES: Category[] = [
   { id: "art", name: "Art & Images", color: "#f43f5e", icon: "palette" },
   { id: "writing", name: "Writing", color: "#f59e0b", icon: "pen" },

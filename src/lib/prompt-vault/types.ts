@@ -27,19 +27,36 @@ export interface Category {
   icon: string;
 }
 
+/** An ordered set of prompts — a playbook you can copy in one click. */
+export interface Collection {
+  id: string;
+  name: string;
+  description: string;
+  color: string;
+  promptIds: string[];
+  createdAt: string;
+}
+
 export type PromptDraft = Pick<
   Prompt,
   "title" | "content" | "category" | "tags" | "notes" | "images" | "rating" | "engine"
 >;
 
 export type SortKey = "newest" | "oldest" | "title" | "rating" | "usage" | "custom";
-export type ViewMode = "grid" | "list";
+export type ViewMode = "grid" | "list" | "cover";
 
 export interface VaultSnapshot {
   prompts: Prompt[];
   categories: Category[];
   favorites: string[];
   customOrder: string[];
+  collections: Collection[];
+}
+
+/** Privacy lock — the PIN itself is never stored, only its hash. */
+export interface Security {
+  pinHash: string | null;
+  hint: string;
 }
 
 export interface ExportBundle extends VaultSnapshot {
