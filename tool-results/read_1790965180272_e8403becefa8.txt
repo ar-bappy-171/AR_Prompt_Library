@@ -1,0 +1,1114 @@
+     1→<!DOCTYPE html>
+     2→<html lang="en">
+     3→<head>
+     4→    <meta charset="UTF-8">
+     5→    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     6→    <title>Prompt Vault | Professional AI Prompt Management</title>
+     7→    <meta name="description" content="A professional platform for managing, organizing, and analyzing AI prompts with advanced features.">
+     8→    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+     9→    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    10→    <link rel="stylesheet" href="style.css">
+    11→    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💾</text></svg>">
+    12→    <style>
+    13→        /* Additional styles for image upload */
+    14→        .image-upload-card {
+    15→            position: relative;
+    16→            background: var(--bg-tertiary);
+    17→            border: 2px dashed var(--border-color);
+    18→            border-radius: var(--border-radius);
+    19→            height: 150px;
+    20→            display: flex;
+    21→            align-items: center;
+    22→            justify-content: center;
+    23→            cursor: pointer;
+    24→            transition: all var(--transition-fast);
+    25→            overflow: hidden;
+    26→        }
+    27→
+    28→        .image-upload-card:hover {
+    29→            border-color: var(--primary-500);
+    30→            background: var(--primary-50);
+    31→        }
+    32→
+    33→        .image-upload-card.has-image {
+    34→            border: 2px solid var(--success-500);
+    35→        }
+    36→
+    37→        .image-upload-card.add-more-btn {
+    38→            background: var(--bg-secondary);
+    39→            border-style: dashed;
+    40→        }
+    41→
+    42→        .image-upload-card.add-more-btn:hover {
+    43→            background: var(--primary-50);
+    44→            border-color: var(--primary-500);
+    45→        }
+    46→
+    47→        .image-upload-placeholder {
+    48→            text-align: center;
+    49→            color: var(--text-tertiary);
+    50→            z-index: 1;
+    51→            pointer-events: none;
+    52→        }
+    53→
+    54→        .image-upload-placeholder i {
+    55→            font-size: 2rem;
+    56→            margin-bottom: 0.5rem;
+    57→            display: block;
+    58→        }
+    59→
+    60→        .image-upload-placeholder span {
+    61→            display: block;
+    62→            font-weight: 500;
+    63→            margin-bottom: 0.25rem;
+    64→        }
+    65→
+    66→        .image-upload-placeholder small {
+    67→            font-size: 0.75rem;
+    68→            opacity: 0.8;
+    69→        }
+    70→
+    71→        .image-upload-card input[type="file"] {
+    72→            position: absolute;
+    73→            inset: 0;
+    74→            opacity: 0;
+    75→            cursor: pointer;
+    76→            z-index: 2;
+    77→        }
+    78→
+    79→        .image-preview-container {
+    80→            position: absolute;
+    81→            inset: 0;
+    82→            width: 100%;
+    83→            height: 100%;
+    84→            display: none;
+    85→        }
+    86→
+    87→        .image-preview-container img {
+    88→            width: 100%;
+    89→            height: 100%;
+    90→            object-fit: cover;
+    91→            border-radius: var(--border-radius);
+    92→        }
+    93→
+    94→        .image-upload-card .remove-image {
+    95→            position: absolute;
+    96→            top: 0.5rem;
+    97→            right: 0.5rem;
+    98→            width: 24px;
+    99→            height: 24px;
+   100→            background: var(--danger-500);
+   101→            color: white;
+   102→            border: none;
+   103→            border-radius: 50%;
+   104→            cursor: pointer;
+   105→            display: flex;
+   106→            align-items: center;
+   107→            justify-content: center;
+   108→            z-index: 3;
+   109→            font-size: 1rem;
+   110→            line-height: 1;
+   111→            display: none;
+   112→        }
+   113→
+   114→        .image-upload-card .remove-image:hover {
+   115→            background: var(--danger-600);
+   116→            transform: scale(1.1);
+   117→        }
+   118→
+   119→        .images-grid {
+   120→            display: grid;
+   121→            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+   122→            gap: 1rem;
+   123→            margin-top: 1rem;
+   124→        }
+   125→
+   126→        /* Scrollable modal body */
+   127→        .modal-body {
+   128→            max-height: 70vh;
+   129→            overflow-y: auto;
+   130→            padding-right: 0.5rem;
+   131→        }
+   132→
+   133→        .modal-body::-webkit-scrollbar {
+   134→            width: 6px;
+   135→        }
+   136→
+   137→        .modal-body::-webkit-scrollbar-track {
+   138→            background: var(--bg-secondary);
+   139→            border-radius: 3px;
+   140→        }
+   141→
+   142→        .modal-body::-webkit-scrollbar-thumb {
+   143→            background: var(--border-color);
+   144→            border-radius: 3px;
+   145→        }
+   146→
+   147→        .modal-body::-webkit-scrollbar-thumb:hover {
+   148→            background: var(--text-tertiary);
+   149→        }
+   150→
+   151→        /* Prompt details styles */
+   152→        .prompt-details {
+   153→            padding: 1rem;
+   154→        }
+   155→
+   156→        .details-header {
+   157→            display: flex;
+   158→            align-items: center;
+   159→            justify-content: space-between;
+   160→            margin-bottom: 1.5rem;
+   161→            padding-bottom: 1rem;
+   162→            border-bottom: 1px solid var(--border-color);
+   163→        }
+   164→
+   165→        .details-header h3 {
+   166→            margin: 0;
+   167→            flex: 1;
+   168→        }
+   169→
+   170→        .details-content {
+   171→            display: flex;
+   172→            flex-direction: column;
+   173→            gap: 1.5rem;
+   174→        }
+   175→
+   176→        .section {
+   177→            background: var(--bg-secondary);
+   178→            padding: 1.25rem;
+   179→            border-radius: var(--border-radius);
+   180→            border: 1px solid var(--border-color);
+   181→        }
+   182→
+   183→        .section h4 {
+   184→            margin: 0 0 1rem 0;
+   185→            display: flex;
+   186→            align-items: center;
+   187→            gap: 0.5rem;
+   188→        }
+   189→
+   190→        .content-box, .notes-box {
+   191→            background: var(--bg-primary);
+   192→            padding: 1rem;
+   193→            border-radius: var(--border-radius-sm);
+   194→            border: 1px solid var(--border-color);
+   195→            white-space: pre-wrap;
+   196→            line-height: 1.6;
+   197→        }
+   198→
+   199→        .details-stats {
+   200→            display: grid;
+   201→            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+   202→            gap: 1rem;
+   203→            padding: 1rem;
+   204→            background: var(--bg-tertiary);
+   205→            border-radius: var(--border-radius);
+   206→        }
+   207→
+   208→        .stat-item {
+   209→            display: flex;
+   210→            justify-content: space-between;
+   211→            align-items: center;
+   212→            padding: 0.5rem;
+   213→        }
+   214→
+   215→        .stat-label {
+   216→            color: var(--text-tertiary);
+   217→            font-weight: 500;
+   218→        }
+   219→
+   220→        .stat-value {
+   221→            font-weight: 600;
+   222→            color: var(--text-primary);
+   223→        }
+   224→
+   225→        .tags-list {
+   226→            display: flex;
+   227→            flex-wrap: wrap;
+   228→            gap: 0.5rem;
+   229→        }
+   230→
+   231→        .details-meta {
+   232→            display: flex;
+   233→            gap: 2rem;
+   234→            padding-top: 1rem;
+   235→            border-top: 1px solid var(--border-color);
+   236→            color: var(--text-tertiary);
+   237→            font-size: 0.875rem;
+   238→        }
+   239→
+   240→        .meta-item {
+   241→            display: flex;
+   242→            align-items: center;
+   243→            gap: 0.5rem;
+   244→        }
+   245→
+   246→        /* Empty state in prompts container */
+   247→        .prompts-container .empty-state {
+   248→            grid-column: 1 / -1;
+   249→            text-align: center;
+   250→            padding: 4rem 2rem;
+   251→        }
+   252→
+   253→        .empty-illustration {
+   254→            font-size: 4rem;
+   255→            color: var(--text-tertiary);
+   256→            margin-bottom: 1.5rem;
+   257→            opacity: 0.5;
+   258→        }
+   259→
+   260→        .empty-state h3 {
+   261→            font-size: 1.5rem;
+   262→            margin-bottom: 0.5rem;
+   263→            color: var(--text-primary);
+   264→        }
+   265→
+   266→        .empty-state p {
+   267→            color: var(--text-tertiary);
+   268→            margin-bottom: 2rem;
+   269→            max-width: 400px;
+   270→            margin-left: auto;
+   271→            margin-right: auto;
+   272→        }
+   273→
+   274→        .empty-actions {
+   275→            display: flex;
+   276→            gap: 1rem;
+   277→            justify-content: center;
+   278→        }
+   279→
+   280→        /* Category badges */
+   281→        .category-badge {
+   282→            display: inline-flex;
+   283→            align-items: center;
+   284→            gap: 0.375rem;
+   285→            padding: 0.25rem 0.75rem;
+   286→            border-radius: 9999px;
+   287→            font-size: 0.75rem;
+   288→            font-weight: 500;
+   289→            white-space: nowrap;
+   290→        }
+   291→
+   292→        /* Pagination ellipsis */
+   293→        .page-ellipsis {
+   294→            display: flex;
+   295→            align-items: center;
+   296→            justify-content: center;
+   297→            min-width: 36px;
+   298→            color: var(--text-tertiary);
+   299→        }
+   300→
+   301→        /* Tags input */
+   302→        .tag-input {
+   303→            display: inline-flex;
+   304→            align-items: center;
+   305→            gap: 0.375rem;
+   306→            padding: 0.375rem 0.75rem;
+   307→            background: var(--primary-50);
+   308→            color: var(--primary-700);
+   309→            border-radius: 9999px;
+   310→            font-size: 0.75rem;
+   311→            font-weight: 500;
+   312→        }
+   313→
+   314→        .tag-input .remove-tag {
+   315→            background: none;
+   316→            border: none;
+   317→            color: inherit;
+   318→            cursor: pointer;
+   319→            padding: 0;
+   320→            font-size: 1rem;
+   321→            line-height: 1;
+   322→            opacity: 0.7;
+   323→        }
+   324→
+   325→        .tag-input .remove-tag:hover {
+   326→            opacity: 1;
+   327→        }
+   328→
+   329→        /* Rating stars */
+   330→        #ratingStars .star {
+   331→            font-size: 1.25rem;
+   332→            color: var(--gray-300);
+   333→            cursor: pointer;
+   334→            transition: color var(--transition-fast);
+   335→        }
+   336→
+   337→        #ratingStars .star.active,
+   338→        #ratingStars .star:hover {
+   339→            color: var(--warning-500);
+   340→        }
+   341→
+   342→        .help-text {
+   343→            font-size: 0.875rem;
+   344→            color: var(--text-tertiary);
+   345→            margin-top: 0.25rem;
+   346→            margin-bottom: 0.5rem;
+   347→        }
+   348→    </style>
+   349→</head>
+   350→<body>
+   351→    <div class="container">
+   352→        <!-- Header Section -->
+   353→        <header class="header">
+   354→            <div class="logo-container">
+   355→                <h1><i class="fas fa-brain"></i> Prompt Vault</h1>
+   356→                <p class="tagline">Professional AI Prompt Management Platform</p>
+   357→                <div class="version-badge">v2.1</div>
+   358→            </div>
+   359→            
+   360→            <div class="header-controls">
+   361→                <div class="control-group">
+   362→                    <button id="templatesBtn" class="btn btn-outline" title="Manage templates">
+   363→                        <i class="fas fa-layer-group"></i> Templates
+   364→                    </button>
+   365→                    <button id="statsBtn" class="btn btn-outline" title="View analytics">
+   366→                        <i class="fas fa-chart-line"></i> Analytics
+   367→                    </button>
+   368→                </div>
+   369→                
+   370→                <div class="control-group">
+   371→                    <button id="importBtn" class="btn btn-outline">
+   372→                        <i class="fas fa-file-import"></i> Import
+   373→                    </button>
+   374→                    <button id="exportBtn" class="btn btn-outline">
+   375→                        <i class="fas fa-file-export"></i> Export
+   376→                    </button>
+   377→                </div>
+   378→                
+   379→                <div class="theme-control">
+   380→                    <button id="themeToggle" class="btn-icon" title="Toggle theme">
+   381→                        <i class="fas fa-moon"></i>
+   382→                    </button>
+   383→                </div>
+   384→            </div>
+   385→        </header>
+   386→
+   387→        <!-- Main Content Area -->
+   388→        <main class="main-content">
+   389→            <!-- Sidebar -->
+   390→            <aside class="sidebar">
+   391→                <div class="sidebar-header">
+   392→                    <h3><i class="fas fa-sliders-h"></i> Filters & Categories</h3>
+   393→                </div>
+   394→                
+   395→                <div class="sidebar-section">
+   396→                    <h4><i class="fas fa-filter"></i> Quick Filters</h4>
+   397→                    <div class="filter-buttons">
+   398→                        <button class="filter-btn active" data-filter="all">
+   399→                            <i class="fas fa-th-large"></i> All Prompts
+   400→                            <span class="filter-count" id="countAll">0</span>
+   401→                        </button>
+   402→                        <button class="filter-btn" data-filter="favorites">
+   403→                            <i class="fas fa-heart"></i> Favorites
+   404→                            <span class="filter-count" id="countFavorites">0</span>
+   405→                        </button>
+   406→                        <button class="filter-btn" data-filter="recent">
+   407→                            <i class="fas fa-clock"></i> Recent
+   408→                            <span class="filter-count" id="countRecent">0</span>
+   409→                        </button>
+   410→                        <button class="filter-btn" data-filter="withImages">
+   411→                            <i class="fas fa-image"></i> With Images
+   412→                            <span class="filter-count" id="countImages">0</span>
+   413→                        </button>
+   414→                    </div>
+   415→                </div>
+   416→                
+   417→                <!-- In the Categories section -->
+   418→                <div class="sidebar-section">
+   419→                    <div class="section-header">
+   420→                        <h4><i class="fas fa-folder-tree"></i> Categories</h4>
+   421→                        <div class="section-header-actions">
+   422→                            <button id="addCategoryBtn" class="btn-icon small" title="Add category">
+   423→                                <i class="fas fa-plus"></i>
+   424→                            </button>
+   425→                            <button id="manageCategoriesBtn" class="btn-icon small" title="Manage categories">
+   426→                                <i class="fas fa-cog"></i>
+   427→                            </button>
+   428→                        </div>
+   429→                    </div>
+   430→                    
+   431→                    <div class="categories-container">
+   432→                        <div id="categoriesList" class="categories-list">
+   433→                            <!-- Categories will be populated here -->
+   434→                        </div>
+   435→                        
+   436→                        <div class="add-category-form" id="addCategoryForm" style="display: none;">
+   437→                            <div class="form-group">
+   438→                                <label>Category Name</label>
+   439→                                <input type="text" id="newCategoryName" placeholder="Enter category name">
+   440→                            </div>
+   441→                            <div class="form-group">
+   442→                                <label>Parent Category (Optional)</label>
+   443→                                <select id="newCategoryParent">
+   444→                                    <option value="">None (Main Category)</option>
+   445→                                    <!-- Parent categories will be populated here -->
+   446→                                </select>
+   447→                            </div>
+   448→                            <div class="form-group">
+   449→                                <label>Color</label>
+   450→                                <input type="color" id="newCategoryColor" value="#6366f1">
+   451→                            </div>
+   452→                            <div class="form-actions">
+   453→                                <button id="cancelCategoryBtn" class="btn-text">Cancel</button>
+   454→                                <button id="saveCategoryBtn" class="btn-text primary">Add Category</button>
+   455→                            </div>
+   456→                        </div>
+   457→                    </div>
+   458→                </div>
+   459→                
+   460→                <div class="sidebar-section">
+   461→                    <h4><i class="fas fa-chart-pie"></i> Library Stats</h4>
+   462→                    <div class="stats-mini">
+   463→                        <div class="stat-item">
+   464→                            <span class="stat-label">Total:</span>
+   465→                            <span id="totalPrompts" class="stat-value">0</span>
+   466→                        </div>
+   467→                        <div class="stat-item">
+   468→                            <span class="stat-label">Favorites:</span>
+   469→                            <span id="totalFavorites" class="stat-value">0</span>
+   470→                        </div>
+   471→                        <div class="stat-item">
+   472→                            <span class="stat-label">Categories:</span>
+   473→                            <span id="totalCategories" class="stat-value">7</span>
+   474→                        </div>
+   475→                        <div class="stat-item">
+   476→                            <span class="stat-label">Today:</span>
+   477→                            <span id="promptsToday" class="stat-value">0</span>
+   478→                        </div>
+   479→                    </div>
+   480→                </div>
+   481→                
+   482→                <div class="sidebar-section">
+   483→                    <h4><i class="fas fa-bolt"></i> Quick Actions</h4>
+   484→                    <div class="quick-actions">
+   485→                        <button id="bulkEditBtn" class="action-link">
+   486→                            <i class="fas fa-edit"></i> Bulk Edit
+   487→                        </button>
+   488→                        <button id="findDuplicatesBtn" class="action-link">
+   489→                            <i class="fas fa-copy"></i> Find Duplicates
+   490→                        </button>
+   491→                        <button id="clearCacheBtn" class="action-link">
+   492→                            <i class="fas fa-broom"></i> Clear Cache
+   493→                        </button>
+   494→                        <button id="backupBtn" class="action-link">
+   495→                            <i class="fas fa-save"></i> Backup Now
+   496→                        </button>
+   497→                    </div>
+   498→                </div>
+   499→            </aside>
+   500→
+   501→            <!-- Main Content -->
+   502→            <section class="main-panel">
+   503→                <!-- Top Bar -->
+   504→                <div class="top-bar">
+   505→                    <div class="search-container">
+   506→                        <div class="search-input-wrapper">
+   507→                            <i class="fas fa-search"></i>
+   508→                            <input type="text" id="searchInput" placeholder="Search prompts, tags, or content...">
+   509→                            <div class="search-actions">
+   510→                                <button id="clearSearchBtn" class="btn-icon small" title="Clear search">
+   511→                                    <i class="fas fa-times"></i>
+   512→                                </button>
+   513→                            </div>
+   514→                        </div>
+   515→                        <div id="searchSuggestions" class="search-suggestions"></div>
+   516→                    </div>
+   517→                    
+   518→                    <div class="top-bar-actions">
+   519→                        <div class="view-controls">
+   520→                            <button id="gridViewBtn" class="view-btn active" title="Grid view">
+   521→                                <i class="fas fa-th-large"></i>
+   522→                            </button>
+   523→                            <button id="listViewBtn" class="view-btn" title="List view">
+   524→                                <i class="fas fa-list"></i>
+   525→                            </button>
+   526→                            <button id="compactViewBtn" class="view-btn" title="Compact view">
+   527→                                <i class="fas fa-grip-horizontal"></i>
+   528→                            </button>
+   529→                        </div>
+   530→                        
+   531→                        <div class="sort-controls">
+   532→                            <select id="sortSelect" class="sort-select">
+   533→                                <option value="newest">Newest First</option>
+   534→                                <option value="oldest">Oldest First</option>
+   535→                                <option value="title">Title A-Z</option>
+   536→                                <option value="rating">Highest Rated</option>
+   537→                                <option value="complexity">Most Complex</option>
+   538→                                <option value="custom">Custom Order</option>
+   539→                            </select>
+   540→                        </div>
+   541→                        
+   542→                        <button id="addPromptBtn" class="btn btn-primary">
+   543→                            <i class="fas fa-plus-circle"></i> New Prompt
+   544→                        </button>
+   545→                    </div>
+   546→                </div>
+   547→                
+   548→                <!-- Content Area -->
+   549→                <div class="content-area">
+   550→                    <!-- Stats Bar -->
+   551→                    <div class="stats-bar">
+   552→                        <div class="stats-bar-item">
+   553→                            <span class="stats-label">Showing:</span>
+   554→                            <span id="showingCount" class="stats-value">0</span>
+   555→                            <span class="stats-label">of</span>
+   556→                            <span id="totalCount" class="stats-value">0</span>
+   557→                        </div>
+   558→                        <div class="stats-bar-item">
+   559→                            <span class="stats-label">Words:</span>
+   560→                            <span id="totalWords" class="stats-value">0</span>
+   561→                        </div>
+   562→                        <div class="stats-bar-item">
+   563→                            <span class="stats-label">Tokens:</span>
+   564→                            <span id="totalTokens" class="stats-value">0</span>
+   565→                        </div>
+   566→                        <div class="stats-bar-item">
+   567→                            <button id="selectAllBtn" class="btn-text small">Select All</button>
+   568→                            <button id="compareBtn" class="btn-text small compare" style="display: none;">
+   569→                                <i class="fas fa-columns"></i> Compare Selected
+   570→                            </button>
+   571→                            <button id="bulkDeleteBtn" class="btn-text small danger" style="display: none;">
+   572→                                <i class="fas fa-trash"></i> Delete Selected
+   573→                            </button>
+   574→                        </div>
+   575→                    </div>
+   576→                    
+   577→                    <!-- Prompts Grid/List -->
+   578→                    <div id="promptsContainer" class="prompts-container grid-view">
+   579→                        <div class="empty-state" id="emptyState">
+   580→                            <div class="empty-illustration">
+   581→                                <i class="fas fa-comment-alt"></i>
+   582→                            </div>
+   583→                            <h3>Your Prompt Library is Empty</h3>
+   584→                            <p>Start by adding your first AI prompt to build your collection</p>
+   585→                            <div class="empty-actions">
+   586→                                <button id="addFirstPromptBtn" class="btn btn-primary">
+   587→                                    <i class="fas fa-plus-circle"></i> Create First Prompt
+   588→                                </button>
+   589→                                <button id="importSampleBtn" class="btn btn-outline">
+   590→                                    <i class="fas fa-magic"></i> Load Sample Data
+   591→                                </button>
+   592→                            </div>
+   593→                        </div>
+   594→                    </div>
+   595→                    
+   596→                    <!-- Pagination -->
+   597→                    <div class="pagination" id="pagination" style="display: none;">
+   598→                        <button class="pagination-btn" id="prevPageBtn" disabled>
+   599→                            <i class="fas fa-chevron-left"></i> Previous
+   600→                        </button>
+   601→                        <div class="page-numbers" id="pageNumbers"></div>
+   602→                        <button class="pagination-btn" id="nextPageBtn">
+   603→                            Next <i class="fas fa-chevron-right"></i>
+   604→                        </button>
+   605→                    </div>
+   606→                </div>
+   607→            </section>
+   608→        </main>
+   609→    </div>
+   610→
+   611→    <!-- Add/Edit Prompt Modal -->
+   612→    <div id="promptModal" class="modal">
+   613→        <div class="modal-content modal-lg">
+   614→            <div class="modal-header">
+   615→                <h2 id="modalTitle">Create New Prompt</h2>
+   616→                <div class="modal-actions">
+   617→                    <button class="btn-icon" id="saveAsTemplateBtn" title="Save as template">
+   618→                        <i class="fas fa-save"></i>
+   619→                    </button>
+   620→                    <button class="close-modal">&times;</button>
+   621→                </div>
+   622→            </div>
+   623→            <form id="promptForm">
+   624→                <div class="modal-body">
+   625→                    <div class="form-grid">
+   626→                        <div class="form-group">
+   627→                            <label for="promptTitle">
+   628→                                <i class="fas fa-heading"></i> Prompt Title *
+   629→                            </label>
+   630→                            <input type="text" id="promptTitle" required 
+   631→                                   placeholder="Enter a clear, descriptive title">
+   632→                        </div>
+   633→                        
+   634→                        <div class="form-group">
+   635→                            <label for="promptCategory">
+   636→                                <i class="fas fa-folder"></i> Category *
+   637→                            </label>
+   638→                            <select id="promptCategory" required>
+   639→                                <option value="">Select category</option>
+   640→                            </select>
+   641→                        </div>
+   642→                        
+   643→                        <div class="form-group">
+   644→                            <label for="promptSerialNumber">
+   645→                                <i class="fas fa-hashtag"></i> Serial Number
+   646→                            </label>
+   647→                            <input type="number" id="promptSerialNumber" min="1"
+   648→                                   placeholder="Auto assign if blank">
+   649→                            <small class="help-text">Lower number means older prompt, higher means newer.</small>
+   650→                        </div>
+   651→                        
+   652→                        <div class="form-group">
+   653→                            <label for="promptTags">
+   654→                                <i class="fas fa-tags"></i> Tags
+   655→                            </label>
+   656→                            <div class="tags-input-container">
+   657→                                <input type="text" id="promptTags" 
+   658→                                       placeholder="Type and press Enter to add tags">
+   659→                                <div class="tags-suggestions" id="tagsSuggestions"></div>
+   660→                            </div>
+   661→                            <div class="tags-container" id="tagsContainer"></div>
+   662→                        </div>
+   663→                    </div>
+   664→                    
+   665→                    <div class="form-section">
+   666→                        <div class="section-header">
+   667→                            <label for="promptText">
+   668→                                <i class="fas fa-comment-dots"></i> Prompt Content *
+   669→                            </label>
+   670→                            <div class="char-counter">
+   671→                                <span id="charCount">0</span> characters
+   672→                                <span id="wordCount">0</span> words
+   673→                                <span id="tokenCount">0</span> tokens
+   674→                            </div>
+   675→                        </div>
+   676→                        <textarea id="promptText" rows="8" required 
+   677→                                  placeholder="Enter your AI prompt here..."></textarea>
+   678→                    </div>
+   679→                    
+   680→                    <div class="form-grid">
+   681→                        <div class="form-group">
+   682→                            <label for="promptNotes">
+   683→                                <i class="fas fa-sticky-note"></i> Notes & Parameters
+   684→                            </label>
+   685→                            <textarea id="promptNotes" rows="3" 
+   686→                                      placeholder="Add usage notes, parameters, or tips..."></textarea>
+   687→                        </div>
+   688→                        
+   689→                        <div class="form-group">
+   690→                            <label><i class="fas fa-star"></i> Effectiveness Rating</label>
+   691→                            <div class="rating-input">
+   692→                                <div class="stars" id="ratingStars">
+   693→                                    <span class="star" data-value="1"><i class="far fa-star"></i></span>
+   694→                                    <span class="star" data-value="2"><i class="far fa-star"></i></span>
+   695→                                    <span class="star" data-value="3"><i class="far fa-star"></i></span>
+   696→                                    <span class="star" data-value="4"><i class="far fa-star"></i></span>
+   697→                                    <span class="star" data-value="5"><i class="far fa-star"></i></span>
+   698→                                </div>
+   699→                                <input type="hidden" id="promptRating" value="0">
+   700→                                <div class="rating-label" id="ratingLabel">Not rated</div>
+   701→                            </div>
+   702→                        </div>
+   703→                    </div>
+   704→                    
+   705→                    <div class="form-section">
+   706→                        <div class="section-header">
+   707→                            <h4><i class="fas fa-images"></i> Reference Images</h4>
+   708→                            <div class="section-actions">
+   709→                                <button type="button" class="btn-text" id="addImageUrlBtn">
+   710→                                    <i class="fas fa-link"></i> Add from URL
+   711→                                </button>
+   712→                            </div>
+   713→                        </div>
+   714→                    
+   715→                        <p class="help-text">Add reference images to show input examples or expected output results</p>
+   716→                    
+   717→                        <!-- Input Images Section -->
+   718→                        <div class="images-subsection">
+   719→                            <h5><i class="fas fa-upload" style="color: var(--warning-500);"></i> Input Reference Images</h5>
+   720→                            <p class="help-text">Upload example input images that would be used with this prompt</p>
+   721→                            <div class="images-grid" id="inputImagesGrid">
+   722→                                <!-- Input Reference Images (will be added dynamically) -->
+   723→                                <div class="image-upload-card" data-type="input" data-index="0">
+   724→                                    <div class="image-upload-placeholder">
+   725→                                        <i class="fas fa-upload"></i>
+   726→                                        <span>Input 1</span>
+   727→                                        <small>Example input image</small>
+   728→                                    </div>
+   729→                                    <input type="file" class="image-input" accept="image/*" data-type="input" data-index="0">
+   730→                                    <div class="image-preview-container"></div>
+   731→                                    <button type="button" class="remove-image">×</button>
+   732→                                </div>
+   733→                    
+   734→                                <!-- Add more input images button -->
+   735→                                <div class="image-upload-card add-more-btn" id="addInputImageBtn">
+   736→                                    <div class="image-upload-placeholder">
+   737→                                        <i class="fas fa-plus"></i>
+   738→                                        <span>Add Input Image</span>
+   739→                                        <small>Add another input example</small>
+   740→                                    </div>
+   741→                                </div>
+   742→                            </div>
+   743→                        </div>
+   744→                    
+   745→                        <!-- Result Images Section -->
+   746→                        <div class="images-subsection">
+   747→                            <h5><i class="fas fa-image" style="color: var(--success-500);"></i> Result Reference Images</h5>
+   748→                            <p class="help-text">Upload example output images that this prompt would generate</p>
+   749→                            <div class="images-grid" id="resultImagesGrid">
+   750→                                <!-- Result Images (will be added dynamically) -->
+   751→                                <div class="image-upload-card" data-type="result" data-index="0">
+   752→                                    <div class="image-upload-placeholder">
+   753→                                        <i class="fas fa-image"></i>
+   754→                                        <span>Result 1</span>
+   755→                                        <small>Example output image</small>
+   756→                                    </div>
+   757→                                    <input type="file" class="image-input" accept="image/*" data-type="result" data-index="0">
+   758→                                    <div class="image-preview-container"></div>
+   759→                                    <button type="button" class="remove-image">×</button>
+   760→                                </div>
+   761→                    
+   762→                                <!-- Add more result images button -->
+   763→                                <div class="image-upload-card add-more-btn" id="addResultImageBtn">
+   764→                                    <div class="image-upload-placeholder">
+   765→                                        <i class="fas fa-plus"></i>
+   766→                                        <span>Add Result Image</span>
+   767→                                        <small>Add another output example</small>
+   768→                                    </div>
+   769→                                </div>
+   770→                            </div>
+   771→                        </div>
+   772→                    </div>
+   773→                    
+   774→                    <div class="advanced-section" id="advancedSection">
+   775→                        <div class="section-header toggle-header" id="toggleAdvanced">
+   776→                            <h4><i class="fas fa-cogs"></i> Advanced Settings</h4>
+   777→                            <i class="fas fa-chevron-down"></i>
+   778→                        </div>
+   779→                        <div class="advanced-content" id="advancedContent" style="display: none;">
+   780→                            <div class="form-grid">
+   781→                                <div class="form-group">
+   782→                                    <label for="promptEngine">
+   783→                                        <i class="fas fa-robot"></i> AI Engine
+   784→                                    </label>
+   785→                                    <select id="promptEngine">
+   786→                                        <option value="">Any Engine</option>
+   787→                                        <option value="chatgpt">ChatGPT</option>
+   788→                                        <option value="dalle">DALL-E</option>
+   789→                                        <option value="midjourney">Midjourney</option>
+   790→                                        <option value="stable">Stable Diffusion</option>
+   791→                                        <option value="claude">Claude</option>
+   792→                                    </select>
+   793→                                </div>
+   794→                                
+   795→                                <div class="form-group">
+   796→                                    <label for="promptComplexity">
+   797→                                        <i class="fas fa-chart-line"></i> Complexity Level
+   798→                                    </label>
+   799→                                    <select id="promptComplexity">
+   800→                                        <option value="1">Simple</option>
+   801→                                        <option value="2">Basic</option>
+   802→                                        <option value="3" selected>Moderate</option>
+   803→                                        <option value="4">Complex</option>
+   804→                                        <option value="5">Advanced</option>
+   805→                                    </select>
+   806→                                </div>
+   807→                                
+   808→                                <div class="form-group">
+   809→                                    <label for="promptUsageCount">
+   810→                                        <i class="fas fa-fire"></i> Usage Count
+   811→                                    </label>
+   812→                                    <input type="number" id="promptUsageCount" min="0" value="0">
+   813→                                </div>
+   814→                            </div>
+   815→                        </div>
+   816→                    </div>
+   817→                </div>
+   818→                
+   819→                <div class="modal-footer">
+   820→                    <div class="footer-actions">
+   821→                        <button type="button" class="btn btn-outline close-modal">Cancel</button>
+   822→                        <button type="button" class="btn btn-outline" id="resetFormBtn">Reset</button>
+   823→                        <button type="submit" class="btn btn-primary" id="savePromptBtn">
+   824→                            <i class="fas fa-save"></i> Save Prompt
+   825→                        </button>
+   826→                    </div>
+   827→                    <input type="hidden" id="promptId">
+   828→                </div>
+   829→            </form>
+   830→        </div>
+   831→    </div>
+   832→
+   833→    <!-- Image URL Modal -->
+   834→    <div id="imageUrlModal" class="modal">
+   835→        <div class="modal-content modal-sm">
+   836→            <div class="modal-header">
+   837→                <h3>Add Image from URL</h3>
+   838→                <button class="close-modal">&times;</button>
+   839→            </div>
+   840→            <div class="modal-body">
+   841→                <div class="form-group">
+   842→                    <label for="imageUrlInput">Image URL</label>
+   843→                    <input type="url" id="imageUrlInput" placeholder="https://example.com/image.jpg">
+   844→                </div>
+   845→                <div class="form-group">
+   846→                    <label for="imageTypeSelect">Image Type</label>
+   847→                    <select id="imageTypeSelect">
+   848→                        <option value="input">Input Reference</option>
+   849→                        <option value="result">Result Example</option>
+   850→                    </select>
+   851→                </div>
+   852→            </div>
+   853→            <div class="modal-footer">
+   854→                <button class="btn btn-outline close-modal">Cancel</button>
+   855→                <button class="btn btn-primary" id="loadImageUrlBtn">Load Image</button>
+   856→            </div>
+   857→        </div>
+   858→    </div>
+   859→
+   860→    <!-- Image Preview Modal -->
+   861→    <div id="imagePreviewModal" class="modal">
+   862→        <div class="modal-content modal-full">
+   863→            <div class="modal-header">
+   864→                <h3 id="imagePreviewTitle">Image Preview</h3>
+   865→                <button class="close-modal">&times;</button>
+   866→            </div>
+   867→            <div class="modal-body">
+   868→                <div class="image-preview-container">
+   869→                    <img id="previewImage" src="" alt="Preview">
+   870→                </div>
+   871→            </div>
+   872→        </div>
+   873→    </div>
+   874→
+   875→    <!-- Prompt Details Modal -->
+   876→    <div id="promptDetailsModal" class="modal">
+   877→        <div class="modal-content modal-lg">
+   878→            <div class="modal-header">
+   879→                <h2 id="detailsTitle">Prompt Details</h2>
+   880→                <div class="modal-actions">
+   881→                    <button class="btn-icon" id="editDetailsBtn" title="Edit prompt">
+   882→                        <i class="fas fa-edit"></i>
+   883→                    </button>
+   884→                    <button class="btn-icon" id="shareDetailsBtn" title="Share prompt">
+   885→                        <i class="fas fa-share"></i>
+   886→                    </button>
+   887→                    <button class="close-modal">&times;</button>
+   888→                </div>
+   889→            </div>
+   890→            <div class="modal-body" id="detailsContent">
+   891→                <!-- Content will be populated dynamically -->
+   892→            </div>
+   893→        </div>
+   894→    </div>
+   895→
+   896→    <!-- Analytics Modal -->
+   897→    <div id="analyticsModal" class="modal">
+   898→        <div class="modal-content modal-xl">
+   899→            <div class="modal-header">
+   900→                <h2>Prompt Library Analytics</h2>
+   901→                <button class="close-modal">&times;</button>
+   902→            </div>
+   903→            <div class="modal-body">
+   904→                <div class="analytics-grid">
+   905→                    <!-- Analytics will be populated here -->
+   906→                </div>
+   907→            </div>
+   908→        </div>
+   909→    </div>
+   910→
+   911→    <!-- Templates Modal -->
+   912→    <div id="templatesModal" class="modal">
+   913→        <div class="modal-content modal-lg">
+   914→            <div class="modal-header">
+   915→                <h2>Prompt Templates</h2>
+   916→                <button class="close-modal">&times;</button>
+   917→            </div>
+   918→            <div class="modal-body">
+   919→                <div class="templates-container" id="templatesContainer">
+   920→                    <!-- Templates will be populated here -->
+   921→                </div>
+   922→            </div>
+   923→        </div>
+   924→    </div>
+   925→
+   926→    <!-- Confirmation Modal -->
+   927→    <div id="confirmModal" class="modal">
+   928→        <div class="modal-content modal-sm">
+   929→            <div class="modal-header">
+   930→                <h3 id="confirmTitle">Confirm Action</h3>
+   931→            </div>
+   932→            <div class="modal-body">
+   933→                <p id="confirmMessage">Are you sure you want to perform this action?</p>
+   934→            </div>
+   935→            <div class="modal-footer">
+   936→                <button id="confirmCancel" class="btn btn-outline">Cancel</button>
+   937→                <button id="confirmOk" class="btn btn-danger">Confirm</button>
+   938→            </div>
+   939→        </div>
+   940→    </div>
+   941→
+   942→    <!-- Comparison Modal -->
+   943→    <div id="comparisonModal" class="modal">
+   944→        <div class="modal-content modal-xl">
+   945→            <div class="modal-header">
+   946→                <h2><i class="fas fa-columns"></i> Prompt Comparison</h2>
+   947→                <button class="close-modal">&times;</button>
+   948→            </div>
+   949→            <div class="modal-body" id="comparisonContent">
+   950→                <!-- Comparison content will be populated dynamically -->
+   951→            </div>
+   952→        </div>
+   953→    </div>
+   954→
+   955→    <!-- Toast Notification -->
+   956→    <div id="toast" class="toast">
+   957→        <div class="toast-content">
+   958→            <div class="toast-icon">
+   959→                <i class="fas fa-check-circle"></i>
+   960→            </div>
+   961→            <div class="toast-body">
+   962→                <div class="toast-title" id="toastTitle">Success</div>
+   963→                <div class="toast-message" id="toastMessage">Operation completed successfully</div>
+   964→            </div>
+   965→            <button class="toast-close">&times;</button>
+   966→        </div>
+   967→    </div>
+   968→
+   969→    <!-- Loading Overlay -->
+   970→    <div id="loadingOverlay" class="loading-overlay">
+   971→        <div class="loading-content">
+   972→            <div class="loading-spinner"></div>
+   973→            <div class="loading-text">Loading...</div>
+   974→        </div>
+   975→    </div>
+   976→
+   977→    <!-- Floating Action Button -->
+   978→    <button id="fabButton" class="fab-button" title="Create new prompt (Ctrl+N)">
+   979→        <i class="fas fa-plus"></i>
+   980→    </button>
+   981→
+   982→    <!-- Import File Input -->
+   983→    <input type="file" id="importFile" accept=".json,.txt" style="display: none;">
+   984→
+   985→    <script src="script.js"></script>
+   986→    <script>
+   987→        // Initialize additional event listeners
+   988→        document.addEventListener('DOMContentLoaded', function() {
+   989→            // Setup rating stars
+   990→            const stars = document.querySelectorAll('#ratingStars .star');
+   991→            stars.forEach(star => {
+   992→                star.addEventListener('click', function() {
+   993→                    const rating = parseInt(this.dataset.value);
+   994→                    document.getElementById('promptRating').value = rating;
+   995→                    
+   996→                    // Update stars display
+   997→                    stars.forEach((s, index) => {
+   998→                        if (index < rating) {
+   999→                            s.classList.add('active');
+  1000→                            s.innerHTML = '<i class="fas fa-star"></i>';
+  1001→                        } else {
+  1002→                            s.classList.remove('active');
+  1003→                            s.innerHTML = '<i class="far fa-star"></i>';
+  1004→                        }
+  1005→                    });
+  1006→                    
+  1007→                    // Update label
+  1008→                    const label = document.getElementById('ratingLabel');
+  1009→                    if (label) {
+  1010→                        label.textContent = rating === 0 ? 'Not rated' : `${rating}/5`;
+  1011→                    }
+  1012→                });
+  1013→                
+  1014→                star.addEventListener('mouseover', function() {
+  1015→                    const rating = parseInt(this.dataset.value);
+  1016→                    stars.forEach((s, index) => {
+  1017→                        if (index < rating) {
+  1018→                            s.innerHTML = '<i class="fas fa-star"></i>';
+  1019→                        } else {
+  1020→                            s.innerHTML = '<i class="far fa-star"></i>';
+  1021→                        }
+  1022→                    });
+  1023→                });
+  1024→                
+  1025→                star.addEventListener('mouseout', function() {
+  1026→                    const currentRating = parseInt(document.getElementById('promptRating').value) || 0;
+  1027→                    stars.forEach((s, index) => {
+  1028→                        if (index < currentRating) {
+  1029→                            s.innerHTML = '<i class="fas fa-star"></i>';
+  1030→                        } else {
+  1031→                            s.innerHTML = '<i class="far fa-star"></i>';
+  1032→                        }
+  1033→                    });
+  1034→                });
+  1035→            });
+  1036→            
+  1037→            // Setup advanced section toggle
+  1038→            const toggleHeader = document.getElementById('toggleAdvanced');
+  1039→            if (toggleHeader) {
+  1040→                toggleHeader.addEventListener('click', function() {
+  1041→                    const content = document.getElementById('advancedContent');
+  1042→                    const icon = this.querySelector('i');
+  1043→                    
+  1044→                    if (content.style.display === 'none' || !content.style.display) {
+  1045→                        content.style.display = 'block';
+  1046→                        icon.style.transform = 'rotate(180deg)';
+  1047→                    } else {
+  1048→                        content.style.display = 'none';
+  1049→                        icon.style.transform = 'rotate(0deg)';
+  1050→                    }
+  1051→                });
+  1052→            }
+  1053→            
+  1054→            // Setup tags input
+  1055→            const tagsInput = document.getElementById('promptTags');
+  1056→            if (tagsInput) {
+  1057→                tagsInput.addEventListener('keydown', function(e) {
+  1058→                    if (e.key === 'Enter' || e.key === ',') {
+  1059→                        e.preventDefault();
+  1060→                        const tag = this.value.trim();
+  1061→                        if (tag) {
+  1062→                            addTag(tag);
+  1063→                            this.value = '';
+  1064→                        }
+  1065→                    }
+  1066→                });
+  1067→            }
+  1068→            
+  1069→            // Setup character count
+  1070→            const promptText = document.getElementById('promptText');
+  1071→            if (promptText) {
+  1072→                promptText.addEventListener('input', function() {
+  1073→                    const text = this.value;
+  1074→                    const chars = text.length;
+  1075→                    const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+  1076→                    const tokens = Math.ceil(chars / 4);
+  1077→                    
+  1078→                    document.getElementById('charCount').textContent = chars;
+  1079→                    document.getElementById('wordCount').textContent = words;
+  1080→                    document.getElementById('tokenCount').textContent = tokens;
+  1081→                });
+  1082→            }
+  1083→        });
+  1084→        
+  1085→        function addTag(tagName) {
+  1086→            const container = document.getElementById('tagsContainer');
+  1087→            if (!container) return;
+  1088→            
+  1089→            // Check if tag already exists
+  1090→            const existingTags = Array.from(container.querySelectorAll('.tag-input'))
+  1091→                .map(el => el.textContent.replace('×', '').trim());
+  1092→            
+  1093→            if (existingTags.includes(tagName)) {
+  1094→                return;
+  1095→            }
+  1096→            
+  1097→            const tagEl = document.createElement('span');
+  1098→            tagEl.className = 'tag-input';
+  1099→            tagEl.innerHTML = `
+  1100→                ${tagName}
+  1101→                <button class="remove-tag" type="button">&times;</button>
+  1102→            `;
+  1103→            
+  1104→            // Add remove listener
+  1105→            const removeBtn = tagEl.querySelector('.remove-tag');
+  1106→            removeBtn.addEventListener('click', function() {
+  1107→                this.parentElement.remove();
+  1108→            });
+  1109→            
+  1110→            container.appendChild(tagEl);
+  1111→        }
+  1112→    </script>
+  1113→</body>
+  1114→</html>

@@ -1,0 +1,2002 @@
+     1→/* ============================================
+     2→   PROMPT VAULT - Enhanced Professional Styles
+     3→   ============================================ */
+     4→
+     5→/* CSS Reset & Base */
+     6→* {
+     7→    margin: 0;
+     8→    padding: 0;
+     9→    box-sizing: border-box;
+    10→}
+    11→
+    12→:root {
+    13→    /* Primary Colors */
+    14→    --primary-50: #f0f4ff;
+    15→    --primary-100: #e0e8ff;
+    16→    --primary-200: #c7d2fe;
+    17→    --primary-300: #a5b4fc;
+    18→    --primary-400: #818cf8;
+    19→    --primary-500: #6366f1;
+    20→    --primary-600: #4f46e5;
+    21→    --primary-700: #4338ca;
+    22→    --primary-800: #3730a3;
+    23→    --primary-900: #312e81;
+    24→    
+    25→    /* Neutral Colors */
+    26→    --gray-50: #f9fafb;
+    27→    --gray-100: #f3f4f6;
+    28→    --gray-200: #e5e7eb;
+    29→    --gray-300: #d1d5db;
+    30→    --gray-400: #9ca3af;
+    31→    --gray-500: #6b7280;
+    32→    --gray-600: #4b5563;
+    33→    --gray-700: #374151;
+    34→    --gray-800: #1f2937;
+    35→    --gray-900: #111827;
+    36→    
+    37→    /* Semantic Colors */
+    38→    --success-50: #f0fdf4;
+    39→    --success-100: #dcfce7;
+    40→    --success-500: #22c55e;
+    41→    --success-600: #16a34a;
+    42→    
+    43→    --warning-50: #fffbeb;
+    44→    --warning-100: #fef3c7;
+    45→    --warning-500: #f59e0b;
+    46→    --warning-600: #d97706;
+    47→    
+    48→    --danger-50: #fef2f2;
+    49→    --danger-100: #fee2e2;
+    50→    --danger-500: #ef4444;
+    51→    --danger-600: #dc2626;
+    52→    
+    53→    --info-50: #eff6ff;
+    54→    --info-100: #dbeafe;
+    55→    --info-500: #3b82f6;
+    56→    --info-600: #2563eb;
+    57→    
+    58→    /* Layout */
+    59→    --sidebar-width: 280px;
+    60→    --header-height: 80px;
+    61→    --border-radius-sm: 6px;
+    62→    --border-radius: 10px;
+    63→    --border-radius-lg: 16px;
+    64→    --border-radius-xl: 24px;
+    65→    
+    66→    /* Shadows */
+    67→    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+    68→    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    69→    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    70→    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    71→    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    72→    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    73→    
+    74→    /* Transitions */
+    75→    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    76→    --transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    77→    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+    78→    
+    79→    /* Z-index */
+    80→    --z-dropdown: 100;
+    81→    --z-sticky: 200;
+    82→    --z-fixed: 300;
+    83→    --z-modal: 400;
+    84→    --z-popover: 500;
+    85→    --z-toast: 600;
+    86→}
+    87→
+    88→/* Dark Theme */
+    89→[data-theme="dark"] {
+    90→    --bg-primary: #0f172a;
+    91→    --bg-secondary: #1e293b;
+    92→    --bg-tertiary: #334155;
+    93→    --bg-overlay: rgba(15, 23, 42, 0.8);
+    94→    
+    95→    --text-primary: #f8fafc;
+    96→    --text-secondary: #cbd5e1;
+    97→    --text-tertiary: #94a3b8;
+    98→    --text-muted: #64748b;
+    99→    
+   100→    --border-color: #334155;
+   101→    --border-light: #475569;
+   102→    
+   103→    --shadow-color: rgba(0, 0, 0, 0.3);
+   104→}
+   105→
+   106→/* Light Theme */
+   107→[data-theme="light"] {
+   108→    --bg-primary: #ffffff;
+   109→    --bg-secondary: #f8fafc;
+   110→    --bg-tertiary: #f1f5f9;
+   111→    --bg-overlay: rgba(255, 255, 255, 0.8);
+   112→    
+   113→    --text-primary: #0f172a;
+   114→    --text-secondary: #334155;
+   115→    --text-tertiary: #64748b;
+   116→    --text-muted: #94a3b8;
+   117→    
+   118→    --border-color: #e2e8f0;
+   119→    --border-light: #f1f5f9;
+   120→    
+   121→    --shadow-color: rgba(0, 0, 0, 0.1);
+   122→}
+   123→
+   124→/* Base Styles */
+   125→body {
+   126→    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+   127→    font-size: 14px;
+   128→    line-height: 1.5;
+   129→    color: var(--text-primary);
+   130→    background-color: var(--bg-secondary);
+   131→    min-height: 100vh;
+   132→    transition: background-color var(--transition), color var(--transition);
+   133→}
+   134→
+   135→/* Typography */
+   136→h1, h2, h3, h4, h5, h6 {
+   137→    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+   138→    font-weight: 600;
+   139→    line-height: 1.2;
+   140→    color: var(--text-primary);
+   141→}
+   142→
+   143→h1 {
+   144→    font-size: 2rem;
+   145→    font-weight: 700;
+   146→}
+   147→
+   148→h2 {
+   149→    font-size: 1.5rem;
+   150→}
+   151→
+   152→h3 {
+   153→    font-size: 1.25rem;
+   154→}
+   155→
+   156→h4 {
+   157→    font-size: 1rem;
+   158→    font-weight: 600;
+   159→}
+   160→
+   161→p {
+   162→    margin-bottom: 1rem;
+   163→}
+   164→
+   165→small {
+   166→    font-size: 0.875em;
+   167→    color: var(--text-tertiary);
+   168→}
+   169→
+   170→/* Container */
+   171→.container {
+   172→    max-width: 1440px;
+   173→    margin: 0 auto;
+   174→    padding: 0 1.5rem;
+   175→    width: 100%;
+   176→}
+   177→
+   178→/* Header */
+   179→.header {
+   180→    height: var(--header-height);
+   181→    background: var(--bg-primary);
+   182→    border-bottom: 1px solid var(--border-color);
+   183→    position: sticky;
+   184→    top: 0;
+   185→    z-index: var(--z-sticky);
+   186→    display: flex;
+   187→    align-items: center;
+   188→    justify-content: space-between;
+   189→    padding: 0 2rem;
+   190→    transition: all var(--transition);
+   191→}
+   192→
+   193→.logo-container {
+   194→    display: flex;
+   195→    align-items: center;
+   196→    gap: 1rem;
+   197→}
+   198→
+   199→.logo-container h1 {
+   200→    display: flex;
+   201→    align-items: center;
+   202→    gap: 0.75rem;
+   203→    color: var(--primary-600);
+   204→    margin: 0;
+   205→}
+   206→
+   207→.logo-container h1 i {
+   208→    font-size: 1.75rem;
+   209→}
+   210→
+   211→.tagline {
+   212→    color: var(--text-tertiary);
+   213→    font-size: 0.875rem;
+   214→    margin: 0;
+   215→}
+   216→
+   217→.version-badge {
+   218→    background: var(--primary-100);
+   219→    color: var(--primary-700);
+   220→    font-size: 0.75rem;
+   221→    font-weight: 600;
+   222→    padding: 0.25rem 0.5rem;
+   223→    border-radius: var(--border-radius-sm);
+   224→    margin-left: 0.5rem;
+   225→}
+   226→
+   227→.header-controls {
+   228→    display: flex;
+   229→    align-items: center;
+   230→    gap: 1rem;
+   231→}
+   232→
+   233→.control-group {
+   234→    display: flex;
+   235→    gap: 0.5rem;
+   236→    align-items: center;
+   237→}
+   238→
+   239→/* Main Layout */
+   240→.main-content {
+   241→    display: grid;
+   242→    grid-template-columns: var(--sidebar-width) 1fr;
+   243→    min-height: calc(100vh - var(--header-height));
+   244→}
+   245→
+   246→/* Sidebar */
+   247→.sidebar {
+   248→    background: var(--bg-primary);
+   249→    border-right: 1px solid var(--border-color);
+   250→    padding: 1.5rem;
+   251→    height: 100%;
+   252→    position: sticky;
+   253→    top: var(--header-height);
+   254→    overflow-y: auto;
+   255→    transition: all var(--transition);
+   256→}
+   257→
+   258→.sidebar-header {
+   259→    margin-bottom: 2rem;
+   260→}
+   261→
+   262→.sidebar-section {
+   263→    margin-bottom: 2rem;
+   264→}
+   265→
+   266→.sidebar-section h4 {
+   267→    color: var(--text-secondary);
+   268→    margin-bottom: 1rem;
+   269→    display: flex;
+   270→    align-items: center;
+   271→    gap: 0.5rem;
+   272→}
+   273→
+   274→.section-header {
+   275→    display: flex;
+   276→    align-items: center;
+   277→    justify-content: space-between;
+   278→    margin-bottom: 1rem;
+   279→}
+   280→
+   281→/* Filter Buttons */
+   282→.filter-buttons {
+   283→    display: flex;
+   284→    flex-direction: column;
+   285→    gap: 0.5rem;
+   286→}
+   287→
+   288→.filter-btn {
+   289→    display: flex;
+   290→    align-items: center;
+   291→    justify-content: space-between;
+   292→    padding: 0.75rem 1rem;
+   293→    background: var(--bg-secondary);
+   294→    border: 1px solid var(--border-color);
+   295→    border-radius: var(--border-radius);
+   296→    color: var(--text-secondary);
+   297→    font-size: 0.875rem;
+   298→    font-weight: 500;
+   299→    cursor: pointer;
+   300→    transition: all var(--transition-fast);
+   301→    text-align: left;
+   302→}
+   303→
+   304→.filter-btn:hover {
+   305→    background: var(--bg-tertiary);
+   306→    border-color: var(--primary-300);
+   307→}
+   308→
+   309→.filter-btn.active {
+   310→    background: var(--primary-50);
+   311→    border-color: var(--primary-500);
+   312→    color: var(--primary-700);
+   313→}
+   314→
+   315→.filter-btn i {
+   316→    margin-right: 0.5rem;
+   317→    font-size: 0.875rem;
+   318→}
+   319→
+   320→.filter-count {
+   321→    background: var(--bg-primary);
+   322→    padding: 0.125rem 0.5rem;
+   323→    border-radius: 9999px;
+   324→    font-size: 0.75rem;
+   325→    font-weight: 600;
+   326→}
+   327→
+   328→/* Categories */
+   329→.categories-list {
+   330→    display: flex;
+   331→    flex-direction: column;
+   332→    gap: 0.25rem;
+   333→}
+   334→
+   335→.category-item {
+   336→    display: flex;
+   337→    align-items: center;
+   338→    justify-content: space-between;
+   339→    padding: 0.625rem 0.75rem;
+   340→    border-radius: var(--border-radius);
+   341→    cursor: pointer;
+   342→    transition: all var(--transition-fast);
+   343→    user-select: none;
+   344→}
+   345→
+   346→.category-item:hover {
+   347→    background: var(--bg-tertiary);
+   348→}
+   349→
+   350→.category-item.active {
+   351→    background: var(--primary-50);
+   352→    color: var(--primary-700);
+   353→    font-weight: 500;
+   354→}
+   355→
+   356→.category-name {
+   357→    display: flex;
+   358→    align-items: center;
+   359→    gap: 0.5rem;
+   360→    flex: 1;
+   361→}
+   362→
+   363→.category-badge {
+   364→    width: 8px;
+   365→    height: 8px;
+   366→    border-radius: 50%;
+   367→    display: inline-block;
+   368→}
+   369→
+   370→.category-count {
+   371→    font-size: 0.75rem;
+   372→    color: var(--text-tertiary);
+   373→    background: var(--bg-tertiary);
+   374→    padding: 0.125rem 0.375rem;
+   375→    border-radius: 9999px;
+   376→}
+   377→
+   378→.category-actions {
+   379→    display: flex;
+   380→    gap: 0.25rem;
+   381→    opacity: 0;
+   382→    transition: opacity var(--transition-fast);
+   383→}
+   384→
+   385→.category-item:hover .category-actions {
+   386→    opacity: 1;
+   387→}
+   388→
+   389→/* Add Category Form */
+   390→.add-category-form {
+   391→    padding: 1rem;
+   392→    background: var(--bg-tertiary);
+   393→    border-radius: var(--border-radius);
+   394→    margin-top: 0.5rem;
+   395→}
+   396→
+   397→.add-category-form input {
+   398→    width: 100%;
+   399→    padding: 0.5rem 0.75rem;
+   400→    border: 1px solid var(--border-color);
+   401→    border-radius: var(--border-radius-sm);
+   402→    background: var(--bg-primary);
+   403→    color: var(--text-primary);
+   404→    margin-bottom: 0.75rem;
+   405→}
+   406→
+   407→.form-actions {
+   408→    display: flex;
+   409→    justify-content: flex-end;
+   410→    gap: 0.5rem;
+   411→}
+   412→
+   413→/* Stats Mini */
+   414→.stats-mini {
+   415→    display: flex;
+   416→    flex-direction: column;
+   417→    gap: 0.75rem;
+   418→}
+   419→
+   420→.stat-item {
+   421→    display: flex;
+   422→    justify-content: space-between;
+   423→    align-items: center;
+   424→    padding: 0.5rem 0;
+   425→    border-bottom: 1px solid var(--border-color);
+   426→}
+   427→
+   428→.stat-item:last-child {
+   429→    border-bottom: none;
+   430→}
+   431→
+   432→.stat-label {
+   433→    color: var(--text-tertiary);
+   434→    font-size: 0.875rem;
+   435→}
+   436→
+   437→.stat-value {
+   438→    font-weight: 600;
+   439→    color: var(--text-primary);
+   440→}
+   441→
+   442→/* Quick Actions */
+   443→.quick-actions {
+   444→    display: flex;
+   445→    flex-direction: column;
+   446→    gap: 0.5rem;
+   447→}
+   448→
+   449→.action-link {
+   450→    display: flex;
+   451→    align-items: center;
+   452→    gap: 0.5rem;
+   453→    padding: 0.5rem 0;
+   454→    color: var(--text-secondary);
+   455→    background: none;
+   456→    border: none;
+   457→    cursor: pointer;
+   458→    font-size: 0.875rem;
+   459→    transition: color var(--transition-fast);
+   460→    text-align: left;
+   461→}
+   462→
+   463→.action-link:hover {
+   464→    color: var(--primary-600);
+   465→}
+   466→
+   467→.action-link i {
+   468→    font-size: 0.875rem;
+   469→}
+   470→
+   471→/* Main Panel */
+   472→.main-panel {
+   473→    padding: 2rem;
+   474→    background: var(--bg-secondary);
+   475→    overflow-y: auto;
+   476→}
+   477→
+   478→/* Top Bar */
+   479→.top-bar {
+   480→    display: flex;
+   481→    flex-direction: column;
+   482→    gap: 1.5rem;
+   483→    margin-bottom: 2rem;
+   484→}
+   485→
+   486→.search-container {
+   487→    position: relative;
+   488→}
+   489→
+   490→.search-input-wrapper {
+   491→    position: relative;
+   492→    display: flex;
+   493→    align-items: center;
+   494→}
+   495→
+   496→.search-input-wrapper i {
+   497→    position: absolute;
+   498→    left: 1rem;
+   499→    color: var(--text-tertiary);
+   500→    font-size: 1rem;
+   501→    z-index: 1;
+   502→}
+   503→
+   504→#searchInput {
+   505→    width: 100%;
+   506→    padding: 0.875rem 1rem 0.875rem 3rem;
+   507→    background: var(--bg-primary);
+   508→    border: 1px solid var(--border-color);
+   509→    border-radius: var(--border-radius);
+   510→    color: var(--text-primary);
+   511→    font-size: 0.875rem;
+   512→    transition: all var(--transition-fast);
+   513→}
+   514→
+   515→#searchInput:focus {
+   516→    outline: none;
+   517→    border-color: var(--primary-500);
+   518→    box-shadow: 0 0 0 3px var(--primary-100);
+   519→}
+   520→
+   521→.search-actions {
+   522→    position: absolute;
+   523→    right: 0.75rem;
+   524→    top: 50%;
+   525→    transform: translateY(-50%);
+   526→    display: flex;
+   527→    gap: 0.25rem;
+   528→}
+   529→
+   530→/* Search Suggestions */
+   531→.search-suggestions {
+   532→    position: absolute;
+   533→    top: 100%;
+   534→    left: 0;
+   535→    right: 0;
+   536→    background: var(--bg-primary);
+   537→    border: 1px solid var(--border-color);
+   538→    border-radius: var(--border-radius);
+   539→    margin-top: 0.25rem;
+   540→    box-shadow: var(--shadow-lg);
+   541→    z-index: var(--z-dropdown);
+   542→    max-height: 300px;
+   543→    overflow-y: auto;
+   544→    display: none;
+   545→}
+   546→
+   547→.search-suggestions.active {
+   548→    display: block;
+   549→}
+   550→
+   551→.suggestion-item {
+   552→    padding: 0.75rem 1rem;
+   553→    cursor: pointer;
+   554→    transition: background-color var(--transition-fast);
+   555→    border-bottom: 1px solid var(--border-light);
+   556→}
+   557→
+   558→.suggestion-item:last-child {
+   559→    border-bottom: none;
+   560→}
+   561→
+   562→.suggestion-item:hover {
+   563→    background: var(--bg-tertiary);
+   564→}
+   565→
+   566→.suggestion-item.highlighted {
+   567→    background: var(--primary-50);
+   568→    color: var(--primary-700);
+   569→}
+   570→
+   571→/* Top Bar Actions */
+   572→.top-bar-actions {
+   573→    display: flex;
+   574→    align-items: center;
+   575→    justify-content: space-between;
+   576→    gap: 1rem;
+   577→}
+   578→
+   579→.view-controls {
+   580→    display: flex;
+   581→    gap: 0.25rem;
+   582→    background: var(--bg-primary);
+   583→    border: 1px solid var(--border-color);
+   584→    border-radius: var(--border-radius);
+   585→    padding: 0.25rem;
+   586→}
+   587→
+   588→.view-btn {
+   589→    width: 36px;
+   590→    height: 36px;
+   591→    display: flex;
+   592→    align-items: center;
+   593→    justify-content: center;
+   594→    background: none;
+   595→    border: none;
+   596→    border-radius: var(--border-radius-sm);
+   597→    color: var(--text-tertiary);
+   598→    cursor: pointer;
+   599→    transition: all var(--transition-fast);
+   600→}
+   601→
+   602→.view-btn:hover {
+   603→    background: var(--bg-tertiary);
+   604→    color: var(--text-primary);
+   605→}
+   606→
+   607→.view-btn.active {
+   608→    background: var(--primary-50);
+   609→    color: var(--primary-600);
+   610→    box-shadow: var(--shadow-xs);
+   611→}
+   612→
+   613→.sort-controls {
+   614→    display: flex;
+   615→    align-items: center;
+   616→    gap: 0.5rem;
+   617→}
+   618→
+   619→.sort-select {
+   620→    padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+   621→    background: var(--bg-primary);
+   622→    border: 1px solid var(--border-color);
+   623→    border-radius: var(--border-radius);
+   624→    color: var(--text-primary);
+   625→    font-size: 0.875rem;
+   626→    cursor: pointer;
+   627→    appearance: none;
+   628→    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+   629→    background-repeat: no-repeat;
+   630→    background-position: right 0.5rem center;
+   631→    background-size: 1.5em 1.5em;
+   632→}
+   633→
+   634→.sort-select:focus {
+   635→    outline: none;
+   636→    border-color: var(--primary-500);
+   637→    box-shadow: 0 0 0 3px var(--primary-100);
+   638→}
+   639→
+   640→/* Content Area */
+   641→.content-area {
+   642→    display: flex;
+   643→    flex-direction: column;
+   644→    gap: 1.5rem;
+   645→}
+   646→
+   647→/* Stats Bar */
+   648→.stats-bar {
+   649→    display: flex;
+   650→    align-items: center;
+   651→    gap: 2rem;
+   652→    padding: 1rem 1.5rem;
+   653→    background: var(--bg-primary);
+   654→    border: 1px solid var(--border-color);
+   655→    border-radius: var(--border-radius);
+   656→    flex-wrap: wrap;
+   657→}
+   658→
+   659→.stats-bar-item {
+   660→    display: flex;
+   661→    align-items: center;
+   662→    gap: 0.5rem;
+   663→}
+   664→
+   665→.stats-label {
+   666→    color: var(--text-tertiary);
+   667→    font-size: 0.875rem;
+   668→}
+   669→
+   670→.stats-value {
+   671→    font-weight: 600;
+   672→    color: var(--text-primary);
+   673→}
+   674→
+   675→/* Prompts Container */
+   676→.prompts-container {
+   677→    display: grid;
+   678→    gap: 1.5rem;
+   679→}
+   680→
+   681→.prompts-container.grid-view {
+   682→    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+   683→}
+   684→
+   685→.prompts-container.list-view {
+   686→    grid-template-columns: 1fr;
+   687→}
+   688→
+   689→.prompts-container.compact-view {
+   690→    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+   691→    gap: 1rem;
+   692→}
+   693→
+   694→/* Prompt Card */
+   695→.prompt-card {
+   696→    background: var(--bg-primary);
+   697→    border: 1px solid var(--border-color);
+   698→    border-radius: var(--border-radius);
+   699→    overflow: hidden;
+   700→    transition: all var(--transition);
+   701→    position: relative;
+   702→    animation: fadeInUp 0.5s ease-out;
+   703→}
+   704→
+   705→.prompt-card:hover {
+   706→    transform: translateY(-2px);
+   707→    box-shadow: var(--shadow-lg);
+   708→    border-color: var(--primary-300);
+   709→}
+   710→
+   711→.prompt-card.selected {
+   712→    border-color: var(--primary-500);
+   713→    box-shadow: 0 0 0 2px var(--primary-100);
+   714→}
+   715→
+   716→.prompt-card-header {
+   717→    padding: 1.25rem 1.25rem 0.75rem;
+   718→    border-bottom: 1px solid var(--border-light);
+   719→    display: flex;
+   720→    align-items: flex-start;
+   721→    justify-content: space-between;
+   722→    gap: 1rem;
+   723→}
+   724→
+   725→.prompt-title {
+   726→    font-size: 1.125rem;
+   727→    font-weight: 600;
+   728→    color: var(--text-primary);
+   729→    margin: 0;
+   730→    line-height: 1.4;
+   731→    display: -webkit-box;
+   732→    -webkit-line-clamp: 2;
+   733→    -webkit-box-orient: vertical;
+   734→    overflow: hidden;
+   735→}
+   736→
+   737→.prompt-serial {
+   738→    margin-left: 0.5rem;
+   739→    font-size: 0.875rem;
+   740→    color: var(--text-tertiary);
+   741→    font-weight: 600;
+   742→    align-self: center;
+   743→}
+   744→
+   745→.serial-label {
+   746→    margin-top: 0.25rem;
+   747→    font-size: 0.9rem;
+   748→    color: var(--text-tertiary);
+   749→}
+   750→
+   751→.prompt-category {
+   752→    display: inline-flex;
+   753→    align-items: center;
+   754→    gap: 0.375rem;
+   755→    padding: 0.25rem 0.75rem;
+   756→    background: var(--primary-50);
+   757→    color: var(--primary-700);
+   758→    border-radius: 9999px;
+   759→    font-size: 0.75rem;
+   760→    font-weight: 500;
+   761→    white-space: nowrap;
+   762→}
+   763→
+   764→.prompt-card-actions {
+   765→    display: flex;
+   766→    gap: 0.25rem;
+   767→    opacity: 0;
+   768→    transition: opacity var(--transition-fast);
+   769→}
+   770→
+   771→.prompt-card:hover .prompt-card-actions {
+   772→    opacity: 1;
+   773→}
+   774→
+   775→.prompt-card-body {
+   776→    padding: 1rem 1.25rem;
+   777→}
+   778→
+   779→.prompt-preview {
+   780→    color: var(--text-secondary);
+   781→    font-size: 0.875rem;
+   782→    line-height: 1.6;
+   783→    margin-bottom: 1rem;
+   784→    display: -webkit-box;
+   785→    -webkit-line-clamp: 3;
+   786→    -webkit-box-orient: vertical;
+   787→    overflow: hidden;
+   788→}
+   789→
+   790→/* Stats Display */
+   791→.prompt-stats {
+   792→    display: flex;
+   793→    flex-wrap: wrap;
+   794→    gap: 1rem;
+   795→    padding: 0.75rem;
+   796→    background: var(--bg-secondary);
+   797→    border-radius: var(--border-radius);
+   798→    margin-bottom: 1rem;
+   799→}
+   800→
+   801→.stat-badge {
+   802→    display: flex;
+   803→    align-items: center;
+   804→    gap: 0.375rem;
+   805→    font-size: 0.75rem;
+   806→    color: var(--text-tertiary);
+   807→}
+   808→
+   809→.stat-badge i {
+   810→    color: var(--text-tertiary);
+   811→}
+   812→
+   813→/* Tags Display */
+   814→.prompt-tags {
+   815→    display: flex;
+   816→    flex-wrap: wrap;
+   817→    gap: 0.375rem;
+   818→    margin-bottom: 1rem;
+   819→}
+   820→
+   821→.tag {
+   822→    display: inline-flex;
+   823→    align-items: center;
+   824→    padding: 0.25rem 0.625rem;
+   825→    background: var(--bg-tertiary);
+   826→    color: var(--text-secondary);
+   827→    border-radius: 9999px;
+   828→    font-size: 0.75rem;
+   829→    font-weight: 500;
+   830→}
+   831→
+   832→/* Images Display */
+   833→.prompt-images {
+   834→    display: flex;
+   835→    gap: 0.5rem;
+   836→    margin-bottom: 1rem;
+   837→}
+   838→
+   839→.image-thumb {
+   840→    width: 100px;
+   841→    height: 100px;
+   842→    border-radius: var(--border-radius-sm);
+   843→    object-fit: cover;
+   844→    cursor: pointer;
+   845→    transition: transform var(--transition-fast);
+   846→    border: 2px solid transparent;
+   847→}
+   848→
+   849→.image-thumb:hover {
+   850→    transform: scale(1.05);
+   851→    border-color: var(--primary-500);
+   852→}
+   853→
+   854→.image-thumb.input {
+   855→    border-color: var(--warning-500);
+   856→}
+   857→
+   858→.image-thumb.result {
+   859→    border-color: var(--success-500);
+   860→}
+   861→
+   862→.prompt-card-footer {
+   863→    padding: 1rem 1.25rem;
+   864→    border-top: 1px solid var(--border-light);
+   865→    display: flex;
+   866→    align-items: center;
+   867→    justify-content: space-between;
+   868→    background: var(--bg-secondary);
+   869→}
+   870→
+   871→.prompt-meta {
+   872→    display: flex;
+   873→    align-items: center;
+   874→    gap: 0.75rem;
+   875→    font-size: 0.75rem;
+   876→    color: var(--text-tertiary);
+   877→}
+   878→
+   879→.prompt-actions {
+   880→    display: flex;
+   881→    gap: 0.25rem;
+   882→}
+   883→
+   884→/* Action Buttons */
+   885→.action-btn {
+   886→    width: 32px;
+   887→    height: 32px;
+   888→    display: flex;
+   889→    align-items: center;
+   890→    justify-content: center;
+   891→    background: var(--bg-primary);
+   892→    border: 1px solid var(--border-color);
+   893→    border-radius: var(--border-radius-sm);
+   894→    color: var(--text-secondary);
+   895→    cursor: pointer;
+   896→    transition: all var(--transition-fast);
+   897→}
+   898→
+   899→.action-btn:hover {
+   900→    background: var(--bg-tertiary);
+   901→    color: var(--text-primary);
+   902→    border-color: var(--border-color);
+   903→}
+   904→
+   905→.action-btn.favorite:hover {
+   906→    background: var(--danger-50);
+   907→    color: var(--danger-600);
+   908→    border-color: var(--danger-200);
+   909→}
+   910→
+   911→.action-btn.favorite.active {
+   912→    background: var(--danger-50);
+   913→    color: var(--danger-600);
+   914→    border-color: var(--danger-200);
+   915→}
+   916→
+   917→.action-btn.copy:hover {
+   918→    background: var(--success-50);
+   919→    color: var(--success-600);
+   920→    border-color: var(--success-200);
+   921→}
+   922→
+   923→.action-btn.edit:hover {
+   924→    background: var(--primary-50);
+   925→    color: var(--primary-600);
+   926→    border-color: var(--primary-200);
+   927→}
+   928→
+   929→.action-btn.delete:hover {
+   930→    background: var(--danger-50);
+   931→    color: var(--danger-600);
+   932→    border-color: var(--danger-200);
+   933→}
+   934→
+   935→/* Empty State */
+   936→.empty-state {
+   937→    text-align: center;
+   938→    padding: 4rem 2rem;
+   939→    grid-column: 1 / -1;
+   940→}
+   941→
+   942→.empty-illustration {
+   943→    font-size: 4rem;
+   944→    color: var(--text-tertiary);
+   945→    margin-bottom: 1.5rem;
+   946→    opacity: 0.5;
+   947→}
+   948→
+   949→.empty-state h3 {
+   950→    font-size: 1.5rem;
+   951→    margin-bottom: 0.5rem;
+   952→    color: var(--text-primary);
+   953→}
+   954→
+   955→.empty-state p {
+   956→    color: var(--text-tertiary);
+   957→    margin-bottom: 2rem;
+   958→    max-width: 400px;
+   959→    margin-left: auto;
+   960→    margin-right: auto;
+   961→}
+   962→
+   963→.empty-actions {
+   964→    display: flex;
+   965→    gap: 1rem;
+   966→    justify-content: center;
+   967→}
+   968→
+   969→/* Pagination */
+   970→.pagination {
+   971→    display: flex;
+   972→    align-items: center;
+   973→    justify-content: center;
+   974→    gap: 0.5rem;
+   975→    padding: 1rem;
+   976→    border-top: 1px solid var(--border-color);
+   977→    margin-top: 2rem;
+   978→}
+   979→
+   980→.pagination-btn {
+   981→    padding: 0.5rem 1rem;
+   982→    background: var(--bg-primary);
+   983→    border: 1px solid var(--border-color);
+   984→    border-radius: var(--border-radius);
+   985→    color: var(--text-primary);
+   986→    font-size: 0.875rem;
+   987→    cursor: pointer;
+   988→    transition: all var(--transition-fast);
+   989→    display: flex;
+   990→    align-items: center;
+   991→    gap: 0.5rem;
+   992→}
+   993→
+   994→.pagination-btn:hover:not(:disabled) {
+   995→    background: var(--bg-tertiary);
+   996→    border-color: var(--border-color);
+   997→}
+   998→
+   999→.pagination-btn:disabled {
+  1000→    opacity: 0.5;
+  1001→    cursor: not-allowed;
+  1002→}
+  1003→
+  1004→.page-numbers {
+  1005→    display: flex;
+  1006→    gap: 0.25rem;
+  1007→}
+  1008→
+  1009→.page-number {
+  1010→    min-width: 36px;
+  1011→    height: 36px;
+  1012→    display: flex;
+  1013→    align-items: center;
+  1014→    justify-content: center;
+  1015→    background: var(--bg-primary);
+  1016→    border: 1px solid var(--border-color);
+  1017→    border-radius: var(--border-radius-sm);
+  1018→    color: var(--text-primary);
+  1019→    font-size: 0.875rem;
+  1020→    cursor: pointer;
+  1021→    transition: all var(--transition-fast);
+  1022→}
+  1023→
+  1024→.page-number:hover {
+  1025→    background: var(--bg-tertiary);
+  1026→}
+  1027→
+  1028→.page-number.active {
+  1029→    background: var(--primary-500);
+  1030→    color: white;
+  1031→    border-color: var(--primary-500);
+  1032→}
+  1033→
+  1034→/* Buttons */
+  1035→.btn {
+  1036→    display: inline-flex;
+  1037→    align-items: center;
+  1038→    justify-content: center;
+  1039→    gap: 0.5rem;
+  1040→    padding: 0.625rem 1.25rem;
+  1041→    border-radius: var(--border-radius);
+  1042→    font-size: 0.875rem;
+  1043→    font-weight: 500;
+  1044→    cursor: pointer;
+  1045→    transition: all var(--transition);
+  1046→    border: 2px solid transparent;
+  1047→    line-height: 1;
+  1048→    user-select: none;
+  1049→}
+  1050→
+  1051→.btn:focus {
+  1052→    outline: none;
+  1053→    box-shadow: 0 0 0 3px var(--primary-100);
+  1054→}
+  1055→
+  1056→.btn:active {
+  1057→    transform: translateY(1px);
+  1058→}
+  1059→
+  1060→.btn-primary {
+  1061→    background: var(--primary-600);
+  1062→    color: white;
+  1063→    border-color: var(--primary-600);
+  1064→}
+  1065→
+  1066→.btn-primary:hover {
+  1067→    background: var(--primary-700);
+  1068→    border-color: var(--primary-700);
+  1069→}
+  1070→
+  1071→.btn-outline {
+  1072→    background: transparent;
+  1073→    color: var(--text-primary);
+  1074→    border-color: var(--border-color);
+  1075→}
+  1076→
+  1077→.btn-outline:hover {
+  1078→    background: var(--bg-tertiary);
+  1079→    border-color: var(--border-color);
+  1080→}
+  1081→
+  1082→.btn-danger {
+  1083→    background: var(--danger-50);
+  1084→    color: var(--danger-600);
+  1085→    border-color: var(--danger-200);
+  1086→}
+  1087→
+  1088→.btn-danger:hover {
+  1089→    background: var(--danger-100);
+  1090→    border-color: var(--danger-300);
+  1091→}
+  1092→
+  1093→.btn-text {
+  1094→    background: none;
+  1095→    border: none;
+  1096→    color: var(--text-secondary);
+  1097→    padding: 0.5rem 0.75rem;
+  1098→    font-size: 0.875rem;
+  1099→    cursor: pointer;
+  1100→    transition: color var(--transition-fast);
+  1101→}
+  1102→
+  1103→.btn-text:hover {
+  1104→    color: var(--text-primary);
+  1105→}
+  1106→
+  1107→.btn-text.primary {
+  1108→    color: var(--primary-600);
+  1109→}
+  1110→
+  1111→.btn-text.primary:hover {
+  1112→    color: var(--primary-700);
+  1113→}
+  1114→
+  1115→.btn-text.danger {
+  1116→    color: var(--danger-600);
+  1117→}
+  1118→
+  1119→.btn-text.danger:hover {
+  1120→    color: var(--danger-700);
+  1121→}
+  1122→
+  1123→.btn-text.small {
+  1124→    padding: 0.25rem 0.5rem;
+  1125→    font-size: 0.75rem;
+  1126→}
+  1127→
+  1128→.btn-icon {
+  1129→    width: 36px;
+  1130→    height: 36px;
+  1131→    display: flex;
+  1132→    align-items: center;
+  1133→    justify-content: center;
+  1134→    background: var(--bg-primary);
+  1135→    border: 1px solid var(--border-color);
+  1136→    border-radius: var(--border-radius);
+  1137→    color: var(--text-secondary);
+  1138→    cursor: pointer;
+  1139→    transition: all var(--transition-fast);
+  1140→}
+  1141→
+  1142→.btn-icon:hover {
+  1143→    background: var(--bg-tertiary);
+  1144→    color: var(--text-primary);
+  1145→}
+  1146→
+  1147→.btn-icon.small {
+  1148→    width: 28px;
+  1149→    height: 28px;
+  1150→    font-size: 0.875rem;
+  1151→}
+  1152→
+  1153→/* Form Elements */
+  1154→.form-grid {
+  1155→    display: grid;
+  1156→    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  1157→    gap: 1.5rem;
+  1158→    margin-bottom: 1.5rem;
+  1159→}
+  1160→
+  1161→.form-section {
+  1162→    margin-bottom: 1.5rem;
+  1163→}
+  1164→
+  1165→.section-header {
+  1166→    display: flex;
+  1167→    align-items: center;
+  1168→    justify-content: space-between;
+  1169→    margin-bottom: 0.75rem;
+  1170→}
+  1171→
+  1172→.form-group {
+  1173→    margin-bottom: 1rem;
+  1174→}
+  1175→
+  1176→.form-group label {
+  1177→    display: block;
+  1178→    margin-bottom: 0.5rem;
+  1179→    font-weight: 500;
+  1180→    color: var(--text-primary);
+  1181→    font-size: 0.875rem;
+  1182→}
+  1183→
+  1184→.form-group label i {
+  1185→    margin-right: 0.5rem;
+  1186→    color: var(--text-tertiary);
+  1187→}
+  1188→
+  1189→.form-group input,
+  1190→.form-group select,
+  1191→.form-group textarea {
+  1192→    width: 100%;
+  1193→    padding: 0.625rem 0.875rem;
+  1194→    background: var(--bg-primary);
+  1195→    border: 1px solid var(--border-color);
+  1196→    border-radius: var(--border-radius);
+  1197→    color: var(--text-primary);
+  1198→    font-size: 0.875rem;
+  1199→    transition: all var(--transition-fast);
+  1200→}
+  1201→
+  1202→.form-group input:focus,
+  1203→.form-group select:focus,
+  1204→.form-group textarea:focus {
+  1205→    outline: none;
+  1206→    border-color: var(--primary-500);
+  1207→    box-shadow: 0 0 0 3px var(--primary-100);
+  1208→}
+  1209→
+  1210→.form-group textarea {
+  1211→    resize: vertical;
+  1212→    min-height: 100px;
+  1213→    font-family: 'Inter', sans-serif;
+  1214→    line-height: 1.5;
+  1215→}
+  1216→
+  1217→/* Tags Input */
+  1218→.tags-input-container {
+  1219→    position: relative;
+  1220→}
+  1221→
+  1222→.tags-container {
+  1223→    display: flex;
+  1224→    flex-wrap: wrap;
+  1225→    gap: 0.375rem;
+  1226→    margin-top: 0.5rem;
+  1227→}
+  1228→
+  1229→.tag-input {
+  1230→    display: inline-flex;
+  1231→    align-items: center;
+  1232→    gap: 0.375rem;
+  1233→    padding: 0.375rem 0.75rem;
+  1234→    background: var(--primary-50);
+  1235→    color: var(--primary-700);
+  1236→    border-radius: 9999px;
+  1237→    font-size: 0.75rem;
+  1238→    font-weight: 500;
+  1239→}
+  1240→
+  1241→.tag-input .remove-tag {
+  1242→    background: none;
+  1243→    border: none;
+  1244→    color: inherit;
+  1245→    cursor: pointer;
+  1246→    padding: 0;
+  1247→    font-size: 0.875rem;
+  1248→    opacity: 0.7;
+  1249→}
+  1250→
+  1251→.tag-input .remove-tag:hover {
+  1252→    opacity: 1;
+  1253→}
+  1254→
+  1255→/* Rating */
+  1256→.rating-input {
+  1257→    display: flex;
+  1258→    align-items: center;
+  1259→    gap: 1rem;
+  1260→}
+  1261→
+  1262→.stars {
+  1263→    display: flex;
+  1264→    gap: 0.25rem;
+  1265→}
+  1266→
+  1267→.star {
+  1268→    font-size: 1.25rem;
+  1269→    color: var(--gray-300);
+  1270→    cursor: pointer;
+  1271→    transition: color var(--transition-fast);
+  1272→}
+  1273→
+  1274→.star:hover,
+  1275→.star.active {
+  1276→    color: var(--warning-500);
+  1277→}
+  1278→
+  1279→.rating-label {
+  1280→    font-size: 0.875rem;
+  1281→    color: var(--text-tertiary);
+  1282→}
+  1283→
+  1284→/* Images Grid */
+  1285→.images-grid {
+  1286→    display: grid;
+  1287→    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  1288→    gap: 1rem;
+  1289→}
+  1290→
+  1291→.image-upload-card {
+  1292→    position: relative;
+  1293→    background: var(--bg-tertiary);
+  1294→    border: 2px dashed var(--border-color);
+  1295→    border-radius: var(--border-radius);
+  1296→    height: 150px;
+  1297→    display: flex;
+  1298→    align-items: center;
+  1299→    justify-content: center;
+  1300→    cursor: pointer;
+  1301→    transition: all var(--transition-fast);
+  1302→    overflow: hidden;
+  1303→}
+  1304→
+  1305→.image-upload-card:hover {
+  1306→    border-color: var(--primary-500);
+  1307→    background: var(--primary-50);
+  1308→}
+  1309→
+  1310→.image-upload-placeholder {
+  1311→    text-align: center;
+  1312→    color: var(--text-tertiary);
+  1313→}
+  1314→
+  1315→.image-upload-placeholder i {
+  1316→    font-size: 2rem;
+  1317→    margin-bottom: 0.5rem;
+  1318→    display: block;
+  1319→}
+  1320→
+  1321→.image-upload-placeholder span {
+  1322→    display: block;
+  1323→    font-weight: 500;
+  1324→    margin-bottom: 0.25rem;
+  1325→}
+  1326→
+  1327→.image-upload-placeholder small {
+  1328→    font-size: 0.75rem;
+  1329→}
+  1330→
+  1331→.image-upload-card input[type="file"] {
+  1332→    position: absolute;
+  1333→    inset: 0;
+  1334→    opacity: 0;
+  1335→    cursor: pointer;
+  1336→}
+  1337→
+  1338→.image-upload-card .image-preview {
+  1339→    position: absolute;
+  1340→    inset: 0;
+  1341→    width: 100%;
+  1342→    height: 100%;
+  1343→    object-fit: cover;
+  1344→}
+  1345→
+  1346→.image-upload-card .remove-image {
+  1347→    position: absolute;
+  1348→    top: 0.5rem;
+  1349→    right: 0.5rem;
+  1350→    width: 24px;
+  1351→    height: 24px;
+  1352→    background: var(--danger-500);
+  1353→    color: white;
+  1354→    border: none;
+  1355→    border-radius: 50%;
+  1356→    cursor: pointer;
+  1357→    display: flex;
+  1358→    align-items: center;
+  1359→    justify-content: center;
+  1360→    opacity: 0;
+  1361→    transition: opacity var(--transition-fast);
+  1362→    z-index: 1;
+  1363→}
+  1364→
+  1365→.image-upload-card:hover .remove-image {
+  1366→    opacity: 1;
+  1367→}
+  1368→
+  1369→/* Advanced Section */
+  1370→.advanced-section {
+  1371→    border: 1px solid var(--border-color);
+  1372→    border-radius: var(--border-radius);
+  1373→    overflow: hidden;
+  1374→}
+  1375→
+  1376→.toggle-header {
+  1377→    padding: 1rem 1.25rem;
+  1378→    background: var(--bg-tertiary);
+  1379→    cursor: pointer;
+  1380→    user-select: none;
+  1381→    display: flex;
+  1382→    align-items: center;
+  1383→    justify-content: space-between;
+  1384→}
+  1385→
+  1386→.toggle-header h4 {
+  1387→    margin: 0;
+  1388→    display: flex;
+  1389→    align-items: center;
+  1390→    gap: 0.5rem;
+  1391→}
+  1392→
+  1393→.toggle-header i {
+  1394→    transition: transform var(--transition);
+  1395→}
+  1396→
+  1397→.toggle-header.active i {
+  1398→    transform: rotate(180deg);
+  1399→}
+  1400→
+  1401→.advanced-content {
+  1402→    padding: 1.25rem;
+  1403→}
+  1404→
+  1405→/* Modals */
+  1406→.modal {
+  1407→    position: fixed;
+  1408→    inset: 0;
+  1409→    background: var(--bg-overlay);
+  1410→    display: none;
+  1411→    align-items: center;
+  1412→    justify-content: center;
+  1413→    padding: 1.5rem;
+  1414→    z-index: var(--z-modal);
+  1415→    animation: fadeIn var(--transition) ease-out;
+  1416→}
+  1417→
+  1418→.modal.active {
+  1419→    display: flex;
+  1420→}
+  1421→
+  1422→.modal-content {
+  1423→    background: var(--bg-primary);
+  1424→    border-radius: var(--border-radius-lg);
+  1425→    box-shadow: var(--shadow-2xl);
+  1426→    animation: slideInUp var(--transition) ease-out;
+  1427→    max-height: 90vh;
+  1428→    display: flex;
+  1429→    flex-direction: column;
+  1430→}
+  1431→
+  1432→.modal-sm {
+  1433→    width: 100%;
+  1434→    max-width: 400px;
+  1435→}
+  1436→
+  1437→.modal-lg {
+  1438→    width: 100%;
+  1439→    max-width: 800px;
+  1440→}
+  1441→
+  1442→.modal-xl {
+  1443→    width: 100%;
+  1444→    max-width: 1000px;
+  1445→}
+  1446→
+  1447→.modal-full {
+  1448→    width: 100%;
+  1449→    max-width: 1200px;
+  1450→}
+  1451→
+  1452→.modal-header {
+  1453→    padding: 1.5rem 2rem;
+  1454→    border-bottom: 1px solid var(--border-color);
+  1455→    display: flex;
+  1456→    align-items: center;
+  1457→    justify-content: space-between;
+  1458→    flex-shrink: 0;
+  1459→}
+  1460→
+  1461→.modal-header h2,
+  1462→.modal-header h3 {
+  1463→    margin: 0;
+  1464→    color: var(--text-primary);
+  1465→}
+  1466→
+  1467→.modal-actions {
+  1468→    display: flex;
+  1469→    align-items: center;
+  1470→    gap: 0.5rem;
+  1471→}
+  1472→
+  1473→.modal-body {
+  1474→    padding: 2rem;
+  1475→    overflow-y: auto;
+  1476→    flex: 1;
+  1477→}
+  1478→
+  1479→.modal-footer {
+  1480→    padding: 1.5rem 2rem;
+  1481→    border-top: 1px solid var(--border-color);
+  1482→    display: flex;
+  1483→    align-items: center;
+  1484→    justify-content: flex-end;
+  1485→    gap: 1rem;
+  1486→    flex-shrink: 0;
+  1487→}
+  1488→
+  1489→.footer-actions {
+  1490→    display: flex;
+  1491→    gap: 1rem;
+  1492→}
+  1493→
+  1494→.close-modal {
+  1495→    background: none;
+  1496→    border: none;
+  1497→    color: var(--text-tertiary);
+  1498→    font-size: 1.5rem;
+  1499→    cursor: pointer;
+  1500→    width: 32px;
+  1501→    height: 32px;
+  1502→    display: flex;
+  1503→    align-items: center;
+  1504→    justify-content: center;
+  1505→    border-radius: var(--border-radius-sm);
+  1506→    transition: all var(--transition-fast);
+  1507→}
+  1508→
+  1509→.close-modal:hover {
+  1510→    background: var(--bg-tertiary);
+  1511→    color: var(--text-primary);
+  1512→}
+  1513→
+  1514→/* Image Preview Modal */
+  1515→.image-preview-container {
+  1516→    display: flex;
+  1517→    align-items: center;
+  1518→    justify-content: center;
+  1519→    min-height: 400px;
+  1520→    max-height: 70vh;
+  1521→}
+  1522→
+  1523→#previewImage {
+  1524→    max-width: 100%;
+  1525→    max-height: 100%;
+  1526→    object-fit: contain;
+  1527→    border-radius: var(--border-radius);
+  1528→}
+  1529→
+  1530→/* Zoom controls for image preview */
+  1531→.zoom-controls {
+  1532→    display: inline-flex;
+  1533→    gap: 0.5rem;
+  1534→    align-items: center;
+  1535→}
+  1536→
+  1537→.zoom-btn {
+  1538→    background: var(--bg-tertiary);
+  1539→    border: 1px solid var(--border-color);
+  1540→    color: var(--text-secondary);
+  1541→    padding: 0.25rem 0.5rem;
+  1542→    border-radius: 6px;
+  1543→    cursor: pointer;
+  1544→    font-weight: 600;
+  1545→}
+  1546→
+  1547→.zoom-btn:hover {
+  1548→    background: var(--bg-primary);
+  1549→    color: var(--text-primary);
+  1550→}
+  1551→
+  1552→#previewImage {
+  1553→    transition: transform 180ms ease-out;
+  1554→    cursor: zoom-in;
+  1555→}
+  1556→
+  1557→/* Ensure the preview container inside the imagePreviewModal is visible
+  1558→   (overrides inline page styles used for upload cards which hide their preview containers) */
+  1559→#imagePreviewModal .image-preview-container {
+  1560→    display: flex !important;
+  1561→    position: relative;
+  1562→    align-items: center;
+  1563→    justify-content: center;
+  1564→    min-height: 400px;
+  1565→}
+  1566→
+  1567→#imagePreviewModal #previewImage {
+  1568→    display: block;
+  1569→    max-width: 100%;
+  1570→    max-height: 80vh;
+  1571→}
+  1572→
+  1573→/* Analytics Grid */
+  1574→.analytics-grid {
+  1575→    display: grid;
+  1576→    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  1577→    gap: 1.5rem;
+  1578→}
+  1579→
+  1580→.analytics-card {
+  1581→    background: var(--bg-secondary);
+  1582→    border: 1px solid var(--border-color);
+  1583→    border-radius: var(--border-radius);
+  1584→    padding: 1.5rem;
+  1585→}
+  1586→
+  1587→.analytics-card h4 {
+  1588→    margin: 0 0 1rem 0;
+  1589→    color: var(--text-secondary);
+  1590→    font-size: 0.875rem;
+  1591→    text-transform: uppercase;
+  1592→    letter-spacing: 0.05em;
+  1593→}
+  1594→
+  1595→.chart-container {
+  1596→    height: 200px;
+  1597→    position: relative;
+  1598→}
+  1599→
+  1600→.stats-list {
+  1601→    display: flex;
+  1602→    flex-direction: column;
+  1603→    gap: 0.75rem;
+  1604→}
+  1605→
+  1606→.stat-row {
+  1607→    display: flex;
+  1608→    justify-content: space-between;
+  1609→    align-items: center;
+  1610→    padding: 0.5rem 0;
+  1611→    border-bottom: 1px solid var(--border-light);
+  1612→}
+  1613→
+  1614→.stat-row:last-child {
+  1615→    border-bottom: none;
+  1616→}
+  1617→
+  1618→.stat-name {
+  1619→    color: var(--text-secondary);
+  1620→    font-size: 0.875rem;
+  1621→}
+  1622→
+  1623→.stat-value {
+  1624→    font-weight: 600;
+  1625→    color: var(--text-primary);
+  1626→}
+  1627→
+  1628→/* Toast Notification */
+  1629→.toast {
+  1630→    position: fixed;
+  1631→    bottom: 2rem;
+  1632→    right: 2rem;
+  1633→    max-width: 400px;
+  1634→    z-index: var(--z-toast);
+  1635→    animation: slideInRight var(--transition) ease-out;
+  1636→    transform: translateX(100%);
+  1637→    opacity: 0;
+  1638→}
+  1639→
+  1640→.toast.show {
+  1641→    transform: translateX(0);
+  1642→    opacity: 1;
+  1643→}
+  1644→
+  1645→.toast-content {
+  1646→    background: var(--bg-primary);
+  1647→    border: 1px solid var(--border-color);
+  1648→    border-radius: var(--border-radius);
+  1649→    box-shadow: var(--shadow-xl);
+  1650→    padding: 1rem;
+  1651→    display: flex;
+  1652→    align-items: flex-start;
+  1653→    gap: 1rem;
+  1654→}
+  1655→
+  1656→.toast-icon {
+  1657→    font-size: 1.25rem;
+  1658→    flex-shrink: 0;
+  1659→}
+  1660→
+  1661→.toast-icon.success {
+  1662→    color: var(--success-500);
+  1663→}
+  1664→
+  1665→.toast-icon.error {
+  1666→    color: var(--danger-500);
+  1667→}
+  1668→
+  1669→.toast-icon.warning {
+  1670→    color: var(--warning-500);
+  1671→}
+  1672→
+  1673→.toast-icon.info {
+  1674→    color: var(--info-500);
+  1675→}
+  1676→
+  1677→.toast-body {
+  1678→    flex: 1;
+  1679→}
+  1680→
+  1681→.toast-title {
+  1682→    font-weight: 600;
+  1683→    color: var(--text-primary);
+  1684→    margin-bottom: 0.25rem;
+  1685→    font-size: 0.875rem;
+  1686→}
+  1687→
+  1688→.toast-message {
+  1689→    color: var(--text-secondary);
+  1690→    font-size: 0.875rem;
+  1691→    line-height: 1.5;
+  1692→}
+  1693→
+  1694→.toast-close {
+  1695→    background: none;
+  1696→    border: none;
+  1697→    color: var(--text-tertiary);
+  1698→    font-size: 1rem;
+  1699→    cursor: pointer;
+  1700→    padding: 0.25rem;
+  1701→    flex-shrink: 0;
+  1702→    align-self: flex-start;
+  1703→}
+  1704→
+  1705→/* Loading Overlay */
+  1706→.loading-overlay {
+  1707→    position: fixed;
+  1708→    inset: 0;
+  1709→    background: var(--bg-overlay);
+  1710→    display: none;
+  1711→    align-items: center;
+  1712→    justify-content: center;
+  1713→    z-index: var(--z-modal);
+  1714→    backdrop-filter: blur(4px);
+  1715→}
+  1716→
+  1717→.loading-overlay.active {
+  1718→    display: flex;
+  1719→}
+  1720→
+  1721→.loading-content {
+  1722→    text-align: center;
+  1723→}
+  1724→
+  1725→.loading-spinner {
+  1726→    width: 48px;
+  1727→    height: 48px;
+  1728→    border: 3px solid var(--border-color);
+  1729→    border-top-color: var(--primary-500);
+  1730→    border-radius: 50%;
+  1731→    animation: spin 1s linear infinite;
+  1732→    margin: 0 auto 1rem;
+  1733→}
+  1734→
+  1735→.loading-text {
+  1736→    color: var(--text-secondary);
+  1737→    font-size: 0.875rem;
+  1738→}
+  1739→
+  1740→/* FAB Button */
+  1741→.fab-button {
+  1742→    position: fixed;
+  1743→    bottom: 2rem;
+  1744→    right: 2rem;
+  1745→    width: 56px;
+  1746→    height: 56px;
+  1747→    background: var(--primary-600);
+  1748→    color: white;
+  1749→    border: none;
+  1750→    border-radius: 50%;
+  1751→    box-shadow: var(--shadow-xl);
+  1752→    cursor: pointer;
+  1753→    display: flex;
+  1754→    align-items: center;
+  1755→    justify-content: center;
+  1756→    font-size: 1.25rem;
+  1757→    z-index: var(--z-fixed);
+  1758→    transition: all var(--transition);
+  1759→}
+  1760→
+  1761→.fab-button:hover {
+  1762→    background: var(--primary-700);
+  1763→    transform: scale(1.05);
+  1764→    box-shadow: var(--shadow-2xl);
+  1765→}
+  1766→
+  1767→.fab-button:active {
+  1768→    transform: scale(0.95);
+  1769→}
+  1770→
+  1771→/* Scrollbar */
+  1772→::-webkit-scrollbar {
+  1773→    width: 8px;
+  1774→    height: 8px;
+  1775→}
+  1776→
+  1777→::-webkit-scrollbar-track {
+  1778→    background: var(--bg-secondary);
+  1779→    border-radius: 4px;
+  1780→}
+  1781→
+  1782→::-webkit-scrollbar-thumb {
+  1783→    background: var(--border-color);
+  1784→    border-radius: 4px;
+  1785→}
+  1786→
+  1787→::-webkit-scrollbar-thumb:hover {
+  1788→    background: var(--text-tertiary);
+  1789→}
+  1790→
+  1791→/* Animations */
+  1792→@keyframes fadeIn {
+  1793→    from {
+  1794→        opacity: 0;
+  1795→    }
+  1796→    to {
+  1797→        opacity: 1;
+  1798→    }
+  1799→}
+  1800→
+  1801→@keyframes fadeInUp {
+  1802→    from {
+  1803→        opacity: 0;
+  1804→        transform: translateY(20px);
+  1805→    }
+  1806→    to {
+  1807→        opacity: 1;
+  1808→        transform: translateY(0);
+  1809→    }
+  1810→}
+  1811→
+  1812→@keyframes slideInUp {
+  1813→    from {
+  1814→        opacity: 0;
+  1815→        transform: translateY(50px);
+  1816→    }
+  1817→    to {
+  1818→        opacity: 1;
+  1819→        transform: translateY(0);
+  1820→    }
+  1821→}
+  1822→
+  1823→@keyframes slideInRight {
+  1824→    from {
+  1825→        opacity: 0;
+  1826→        transform: translateX(100%);
+  1827→    }
+  1828→    to {
+  1829→        opacity: 1;
+  1830→        transform: translateX(0);
+  1831→    }
+  1832→}
+  1833→
+  1834→@keyframes spin {
+  1835→    to {
+  1836→        transform: rotate(360deg);
+  1837→    }
+  1838→}
+  1839→
+  1840→/* Responsive Design */
+  1841→@media (max-width: 1024px) {
+  1842→    .main-content {
+  1843→        grid-template-columns: 240px 1fr;
+  1844→    }
+  1845→    
+  1846→    .prompts-container.grid-view {
+  1847→        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  1848→    }
+  1849→}
+  1850→
+  1851→@media (max-width: 768px) {
+  1852→    .main-content {
+  1853→        grid-template-columns: 1fr;
+  1854→    }
+  1855→    
+  1856→    .sidebar {
+  1857→        display: none;
+  1858→    }
+  1859→    
+  1860→    .header {
+  1861→        padding: 0 1rem;
+  1862→        height: 64px;
+  1863→    }
+  1864→    
+  1865→    .main-panel {
+  1866→        padding: 1rem;
+  1867→    }
+  1868→    
+  1869→    .top-bar-actions {
+  1870→        flex-direction: column;
+  1871→        align-items: stretch;
+  1872→    }
+  1873→    
+  1874→    .view-controls {
+  1875→        align-self: flex-start;
+  1876→    }
+  1877→    
+  1878→    .prompts-container.grid-view,
+  1879→    .prompts-container.compact-view {
+  1880→        grid-template-columns: 1fr;
+  1881→    }
+  1882→    
+  1883→    .modal-content {
+  1884→        margin: 0;
+  1885→        border-radius: 0;
+  1886→        max-height: 100vh;
+  1887→    }
+  1888→    
+  1889→    .modal {
+  1890→        padding: 0;
+  1891→    }
+  1892→}
+  1893→
+  1894→@media (max-width: 480px) {
+  1895→    .container {
+  1896→        padding: 0 1rem;
+  1897→    }
+  1898→    
+  1899→    .header-controls {
+  1900→        flex-wrap: wrap;
+  1901→        gap: 0.5rem;
+  1902→    }
+  1903→    
+  1904→    .control-group {
+  1905→        order: 2;
+  1906→    }
+  1907→    
+  1908→    .theme-control {
+  1909→        order: 1;
+  1910→    }
+  1911→    
+  1912→    .stats-bar {
+  1913→        flex-direction: column;
+  1914→        align-items: stretch;
+  1915→        gap: 1rem;
+  1916→    }
+  1917→    
+  1918→    .empty-actions {
+  1919→        flex-direction: column;
+  1920→        align-items: stretch;
+  1921→    }
+  1922→    
+  1923→    .fab-button {
+  1924→        bottom: 1rem;
+  1925→        right: 1rem;
+  1926→        width: 48px;
+  1927→        height: 48px;
+  1928→    }
+  1929→}
+  1930→
+  1931→/* Print Styles */
+  1932→@media print {
+  1933→    .header,
+  1934→    .sidebar,
+  1935→    .top-bar,
+  1936→    .stats-bar,
+  1937→    .fab-button,
+  1938→    .modal,
+  1939→    .toast {
+  1940→        display: none !important;
+  1941→    }
+  1942→    
+  1943→    .main-content {
+  1944→        grid-template-columns: 1fr;
+  1945→        min-height: auto;
+  1946→    }
+  1947→    
+  1948→    .main-panel {
+  1949→        padding: 0;
+  1950→    }
+  1951→    
+  1952→    .prompts-container {
+  1953→        grid-template-columns: 1fr !important;
+  1954→        gap: 1rem;
+  1955→    }
+  1956→    
+  1957→    .prompt-card {
+  1958→        break-inside: avoid;
+  1959→        box-shadow: none !important;
+  1960→        border: 1px solid #ddd !important;
+  1961→    }
+  1962→}
+  1963→
+  1964→/* Add these styles to style.css */
+  1965→
+  1966→/* Fix for prompt details */
+  1967→.prompt-details {
+  1968→    padding: 1rem;
+  1969→}
+  1970→
+  1971→.details-header {
+  1972→    display: flex;
+  1973→    align-items: center;
+  1974→    justify-content: space-between;
+  1975→    margin-bottom: 1.5rem;
+  1976→    padding-bottom: 1rem;
+  1977→    border-bottom: 1px solid var(--border-color);
+  1978→}
+  1979→
+  1980→.details-header h3 {
+  1981→    margin: 0;
+  1982→    flex: 1;
+  1983→}
+  1984→
+  1985→.details-content {
+  1986→    display: flex;
+  1987→    flex-direction: column;
+  1988→    gap: 1.5rem;
+  1989→}
+  1990→
+  1991→.section {
+  1992→    background: var(--bg-secondary);
+  1993→    padding: 1.25rem;
+  1994→    border-radius: var(--border-radius);
+  1995→    border: 1px solid var(--border-color);
+  1996→}
+  1997→
+  1998→.section h4 {
+  1999→    margin: 0 0 1rem 0;
+  2000→    display: flex;
+
+[showing lines 1-2000 of 3045; use offset=2001 with limit to continue reading]
