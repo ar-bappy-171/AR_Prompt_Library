@@ -90,6 +90,7 @@ export function PromptCoverCard({ prompt }: { prompt: Prompt }) {
             src={cover}
             alt={`${prompt.title} cover`}
             loading="lazy"
+            referrerPolicy="no-referrer"
             className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
           />
         ) : (

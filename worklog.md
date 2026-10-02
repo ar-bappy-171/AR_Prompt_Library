@@ -112,3 +112,19 @@ Work Log:
 
 Stage Summary:
 - README.md now documents the app accurately as built (features verified in previous E2E rounds); no code changes.
+
+---
+Task ID: 8
+Agent: Z.ai Code (main)
+Task: User's old export (from the previous version of the app) imported without pictures — fix legacy-format import so old picture URLs survive.
+
+Work Log:
+- Root cause: current schema is Prompt.images: {id, src, type}[] but old exports stored pictures under other names/shapes (e.g. imageUrl string, images as string[]); old importBundle used raw data as-is in replace mode → pictures silently dropped.
+- Created src/lib/prompt-vault/migrate.ts — normalizeImportedBundle()/normalizeImportedPrompt(): maps legacy single-URL fields (imageUrl, image_url, image, coverImage, cover, picture, photo, thumbnail, thumb, resultImage/outputImage → result, inputImage/referenceImage/refImage → input), list fields (images/imageUrls/pictures/photos/gallery as strings, {src|url|dataUrl|href} objects, or current PromptImage objects), dedupes by src, generates missing ids; also maps name→title, text/prompt→content, stars→rating, model→engine, favorite/isFavorite→favorites, string tags "a, b"→[a,b], missing dates→now, clamps rating 0-5; category name→id remap against bundle categories falling back to DEFAULT_CATEGORIES (fixed initial bug where valid default ids like "art" were reset to "other" when bundle had no categories array).
+- store.importBundle now runs both replace and merge paths through the normalizer.
+- Added referrerPolicy="no-referrer" + loading="lazy" to all prompt-image <img> tags (cover card, card thumbnails, details dialog thumbs + lightbox, image-picker) so old external URLs aren't blocked by hotlink/referrer checks.
+- Agent Browser E2E: built a synthetic legacy export (imageUrl, images-as-strings, images-as-{url} objects, name/text/thumbnail + category "Writing", favorite:true, old createdAt) → injected via the real file input → "Imported 4 prompts"; localStorage shows all 4 prompts with images (id/src/type result), favorites ["old-2"], categories art/writing/other correct; grid view 5/5 imgs loaded incl. external https URL; cover view 4/4 loaded; screenshot confirms photo + SVG covers, heart, 4 stars, tags, "2 years ago".
+- Cleanup: removed test JSON from public/ and download/, cleared test localStorage; `bun run lint` clean.
+
+Stage Summary:
+- Old exports now import fully — pictures included — regardless of legacy field naming; import is also hardened against malformed records (missing dates/tags/rating), per-prompt favorite flags are honored, and external image URLs load without referrer blocking.

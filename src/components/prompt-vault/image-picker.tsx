@@ -131,6 +131,8 @@ export function ImagePicker({ images, onChange, type, label }: ImagePickerProps)
               <img
                 src={img.src}
                 alt={label}
+                loading="lazy"
+                referrerPolicy="no-referrer"
                 className="size-16 rounded-lg border object-cover"
               />
               <button

@@ -144,7 +144,7 @@ export function PromptDetailsDialog() {
                           aria-label="View image full size"
                           className="overflow-hidden rounded-lg border transition-transform hover:scale-[1.03]"
                         >
-                          <img src={img.src} alt="Prompt attachment" className="size-20 object-cover" />
+                          <img src={img.src} alt="Prompt attachment" loading="lazy" referrerPolicy="no-referrer" className="size-20 object-cover" />
                         </button>
                       ))}
                     </div>
@@ -240,6 +240,7 @@ export function PromptDetailsDialog() {
             <img
               src={lightbox}
               alt="Prompt attachment full size"
+              referrerPolicy="no-referrer"
               className="max-h-[85dvh] w-full rounded-xl object-contain"
             />
           )}

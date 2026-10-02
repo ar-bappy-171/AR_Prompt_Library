@@ -210,6 +210,7 @@ export function PromptCard({ prompt }: PromptCardProps) {
               alt={`${prompt.title} attachment`}
               className="h-14 w-14 rounded-lg border object-cover"
               loading="lazy"
+              referrerPolicy="no-referrer"
             />
           ))}
           {prompt.images.length > 3 && (

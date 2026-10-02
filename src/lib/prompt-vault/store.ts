@@ -15,6 +15,7 @@ import type {
   ViewMode,
 } from "./types";
 import { generateId, slugify } from "./utils";
+import { normalizeImportedBundle } from "./migrate";
 
 const MAX_HISTORY = 60;
 const STORAGE_KEY = "prompt-vault-store-v1";
@@ -403,18 +404,16 @@ export const useVaultStore = create<VaultState>()(
         },
 
         importBundle: (bundle, mode) => {
-          const incomingPrompts = Array.isArray(bundle.prompts) ? bundle.prompts : [];
+          /* normalize any legacy export shape (old picture fields, favorites,
+             category names, missing dates) into the current schema first */
+          const normalized = normalizeImportedBundle(bundle as Record<string, unknown>);
+          const incomingPrompts = normalized.prompts;
           if (incomingPrompts.length === 0) return 0;
           const categories =
-            "categories" in bundle && Array.isArray(bundle.categories) && bundle.categories.length
-              ? bundle.categories
-              : DEFAULT_CATEGORIES;
-          const favorites =
-            "favorites" in bundle && Array.isArray(bundle.favorites) ? bundle.favorites : [];
-          const customOrder =
-            "customOrder" in bundle && Array.isArray(bundle.customOrder) ? bundle.customOrder : [];
-          const incomingCollections =
-            "collections" in bundle && Array.isArray(bundle.collections) ? bundle.collections : [];
+            normalized.categories.length > 0 ? normalized.categories : DEFAULT_CATEGORIES;
+          const favorites = normalized.favorites;
+          const customOrder = normalized.customOrder;
+          const incomingCollections = normalized.collections;
 
           commit((s) => {
             if (mode === "replace") {
@@ -437,14 +436,7 @@ export const useVaultStore = create<VaultState>()(
                 if (existingSlug.has(key)) return false;
                 existingSlug.add(key);
                 return true;
-              })
-              .map((p) => ({
-                ...p,
-                tags: Array.isArray(p.tags) ? p.tags : [],
-                images: Array.isArray(p.images) ? p.images : [],
-                rating: Number(p.rating) || 0,
-                usageCount: Number(p.usageCount) || 0,
-              }));
+              });
             const catIds = new Set(categories.map((c) => c.id));
             const mergedCollections = [
               ...s.collections,
