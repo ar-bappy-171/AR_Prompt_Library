@@ -1,4 +1,5 @@
 import { format, formatDistanceToNowStrict } from "date-fns";
+import { toast } from "sonner";
 import type { Category, Prompt, SortKey, VaultSnapshot } from "./types";
 
 /* ---------------------------------- ids ---------------------------------- */
@@ -109,6 +110,12 @@ export function downloadJson(filename: string, data: unknown) {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+/** Exports a vault bundle as a dated JSON download (shared by sidebar + mobile menu). */
+export function exportVaultToFile(bundle: unknown) {
+  downloadJson(`prompt-vault-${new Date().toISOString().slice(0, 10)}.json`, bundle);
+  toast.success("Vault exported as JSON");
 }
 
 /* --------------------------------- images --------------------------------- */

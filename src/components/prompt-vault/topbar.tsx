@@ -3,16 +3,19 @@
 import * as React from "react";
 import {
   ArrowDownWideNarrow,
+  Download,
   Grid2x2,
   Image as ImageIcon,
   List,
   Lock,
+  MoreVertical,
   Moon,
   Redo2,
   Search,
   ShieldCheck,
   Sun,
   Undo2,
+  Upload,
   Vault,
   X,
 } from "lucide-react";
@@ -31,6 +34,7 @@ import { Input } from "@/components/ui/input";
 import { useVaultStore } from "@/lib/prompt-vault/store";
 import type { SortKey } from "@/lib/prompt-vault/types";
 import { cn } from "@/lib/utils";
+import { exportVaultToFile } from "@/lib/prompt-vault/utils";
 import { GradientWord } from "./sidebar";
 
 const SORT_LABELS: Record<SortKey, string> = {
@@ -57,6 +61,7 @@ export function Topbar() {
   const hasPin = Boolean(useVaultStore((s) => s.security?.pinHash));
   const lock = useVaultStore((s) => s.lock);
   const setSecurityOpen = useVaultStore((s) => s.setSecurityOpen);
+  const exportBundle = useVaultStore((s) => s.exportBundle);
 
   const searchRef = React.useRef<HTMLInputElement>(null);
 
@@ -86,7 +91,7 @@ export function Topbar() {
         <div className="brand-gradient flex size-8 items-center justify-center rounded-lg text-primary-foreground shadow-sm">
           <Vault className="size-4" aria-hidden="true" />
         </div>
-        <h1 className="font-display text-base font-bold tracking-tight">
+        <h1 className="font-display min-w-0 truncate text-base font-bold tracking-tight">
           Prompt <GradientWord>Vault</GradientWord>
         </h1>
         <div className="ml-auto flex items-center gap-1">
@@ -104,6 +109,33 @@ export function Topbar() {
             <ShieldCheck className="size-4" />
           </Button>
           <ThemeToggle />
+          {/* more options — Import / Export (sidebar with these actions is desktop-only) */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="iconSm"
+                className="size-9 text-muted-foreground hover:text-foreground"
+                aria-label="More options"
+                title="More options"
+              >
+                <MoreVertical className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuLabel>Vault data</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => document.getElementById("pv-import-file")?.click()}
+              >
+                <Upload className="size-4 text-muted-foreground" />
+                Import vault
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => exportVaultToFile(exportBundle())}>
+                <Download className="size-4 text-muted-foreground" />
+                Export vault
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

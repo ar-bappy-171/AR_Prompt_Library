@@ -83,3 +83,20 @@ Work Log:
 
 Stage Summary:
 - Mobile bottom nav is now 6 uniform items (Prompts · Favorites · New · Sets · Templates · Stats) with no oversized FAB; "New" opens the editor like before. PC view unchanged and has no bottom bar by design.
+
+---
+Task ID: 6
+Agent: Z.ai Code (main)
+Task: User asked "where is import export option in mobile view" — Import/Export existed only in the desktop sidebar (hidden on mobile) with no mobile path at all; add them to mobile.
+
+Work Log:
+- Confirmed the gap via grep: pv-import-file trigger + exportBundle lived only in sidebar.tsx (desktop-only aside).
+- Added shared helper exportVaultToFile(bundle) in src/lib/prompt-vault/utils.ts (dated JSON download via existing downloadJson + "Vault exported as JSON" success toast).
+- Refactored sidebar ExportButton to use the shared helper (removed duplicated blob logic; accidentally dropped CategoryIcon/InstallAppButton imports during edit, restored immediately).
+- Added a "More options" (⋮ MoreVertical) dropdown to the mobile topbar identity row in topbar.tsx: "Vault data" label + "Import vault" (clicks hidden #pv-import-file) + "Export vault" (exportVaultToFile(exportBundle())); added min-w-0 truncate to the h1 so 5 header buttons fit narrow phones.
+- Agent Browser E2E (390x844): ⋮ opens menu with both items (screenshot); Export → "Vault exported as JSON" toast; Import → real Playwright click fires the hidden file input (spy on input click = true → native picker opens). NOTE: programmatic el.click() in evals does NOT open Radix menus (they need real pointerdown) — verified only with real clicks.
+- Desktop 1440x900: identity row + More button hidden (display:none), sidebar Import/Export intact.
+- `bun run lint` clean; no page errors.
+
+Stage Summary:
+- Mobile users now have Import/Export via the ⋮ "More options" menu in the header (Vault data section); desktop keeps sidebar Import/Export buttons; export logic deduped into one shared helper with toast feedback.

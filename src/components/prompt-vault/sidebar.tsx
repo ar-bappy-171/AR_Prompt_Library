@@ -21,9 +21,9 @@ import { Separator } from "@/components/ui/separator";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useVaultStore } from "@/lib/prompt-vault/store";
 import { cn } from "@/lib/utils";
+import { exportVaultToFile, storageSizeOf } from "@/lib/prompt-vault/utils";
 import { CategoryIcon } from "./category-icon";
 import { InstallAppButton } from "./pwa";
-import { storageSizeOf } from "@/lib/prompt-vault/utils";
 
 export function GradientWord({
   children,
@@ -237,18 +237,7 @@ function ExportButton() {
       variant="outline"
       size="sm"
       className="flex-1 gap-1.5"
-      onClick={() => {
-        const bundle = exportBundle();
-        const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `prompt-vault-${new Date().toISOString().slice(0, 10)}.json`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 2000);
-      }}
+      onClick={() => exportVaultToFile(exportBundle())}
     >
       <Download className="size-3.5" /> Export
     </Button>
