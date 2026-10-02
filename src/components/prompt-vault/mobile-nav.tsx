@@ -70,9 +70,12 @@ export function MobileNav() {
           favorites.length
         )}
 
-        {/* spacer under the FAB */}
-        <div className="flex items-end justify-center pb-2">
-          <span className="text-[10px] font-medium text-muted-foreground">New</span>
+        {/* spacer under the FAB — mirrors item() structure (icon slot + gap + label)
+            so "New" sits at exactly the same height as the other labels,
+            with the FAB overlapping the reserved icon slot */}
+        <div className="flex h-full flex-col items-center justify-center gap-0.5" aria-hidden="true">
+          <span className="size-5" />
+          <span className="text-[10px] leading-none font-medium text-muted-foreground">New</span>
         </div>
 
         {item(false, () => setCollectionsOpen(true), <BookOpen className="size-5" />, "Sets", collections.length)}

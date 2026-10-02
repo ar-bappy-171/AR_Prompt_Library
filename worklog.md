@@ -52,3 +52,19 @@ Stage Summary:
 - 2 real defects fixed during verification: lock-screen stale-closure keyboard bug; mobile unreachable security settings after PIN setup.
 - App identity: custom purple-vault icon set (32/192/512/maskable/apple-touch), manifest theme #7c3aed, footer icon + v2.1 badge — the "server has its own icon and badge" requirement.
 - User starts clean: empty-vault onboarding with sample loader.
+
+---
+Task ID: 4
+Agent: Z.ai Code (main)
+Task: Fix mobile bottom-nav mismatch — the floating "+" (New) FAB icon and its "New" text label were visually detached/misaligned (user-reported with screenshot).
+
+Work Log:
+- Reproduced live with Agent Browser at 390x844 and measured exact geometry: sibling labels (Prompts/Favorites/Sets/Templates/Stats) all sat at y 818→828, but the "New" label sat at 821→836 — 8px too low and with a taller line box (missing leading-none), because its spacer used `items-end pb-2` instead of mirroring the item() structure.
+- Fixed src/components/prompt-vault/mobile-nav.tsx: replaced the spacer with a flex-col justify-center gap-0.5 column containing an empty size-5 icon slot (overlapped by the FAB) + "New" label with text-[10px] leading-none — identical rhythm to the other nav items, so the FAB's white ring now ends 2px above the label, exactly like icon→label spacing everywhere else.
+- Verified: all six labels now measure exactly 818→828 (pixel-identical baselines); FAB click still opens the "New prompt" editor; dialog closes cleanly.
+- Investigated a hydration-mismatch console error (Radix dropdown trigger useId radix-_R_t32atmlb_ vs radix-_R_3kcaatmlb_): traced topbar/sidebar/layout/store trees — no tree-shape divergence found; after console --clear + fresh reload the error does NOT reproduce (was stale history from earlier HMR reloads, matching the earlier worklog finding). Fresh-load console: 0 errors.
+- Regression checks: desktop 1440x900 unaffected (mobile nav display:none), footer with app icon + v2.1 badge intact, `bun run lint` clean, dev.log shows clean 200s.
+
+Stage Summary:
+- Mobile bottom-nav "New" slot fixed: label baseline now pixel-identical to all other nav labels, and the floating + FAB visually connects to its label with the same 2px gap rhythm as icon→label in sibling items (verified numerically via getBoundingClientRect and visually via screenshots on mobile 390x844 and desktop 1440x900).
+- No other files touched; hydration warning confirmed as stale console history, not a code issue.
