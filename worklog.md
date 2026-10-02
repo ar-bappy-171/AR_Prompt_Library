@@ -100,3 +100,15 @@ Work Log:
 
 Stage Summary:
 - Mobile users now have Import/Export via the ⋮ "More options" menu in the header (Vault data section); desktop keeps sidebar Import/Export buttons; export logic deduped into one shared helper with toast feedback.
+
+---
+Task ID: 7
+Agent: Z.ai Code (main)
+Task: User asked to "add a read me file".
+
+Work Log:
+- Gathered facts from package.json (scripts/deps), public/ (PWA assets), shortcuts-dialog.tsx (shortcut list) and the feature work (worklog) for accuracy.
+- Created /home/z/my-project/README.md: centered header with app icon + tagline; full feature list (prompt management, collections/playbooks, templates & analytics, PIN lock, PWA with own icon/badge + shortcuts, import/export incl. mobile ⋮ menu, UX details); keyboard shortcuts table; getting-started commands; data & privacy notes; project structure tree; tech-stack table; v2.1 footer.
+
+Stage Summary:
+- README.md now documents the app accurately as built (features verified in previous E2E rounds); no code changes.
