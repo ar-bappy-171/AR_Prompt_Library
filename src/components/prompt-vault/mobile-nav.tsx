@@ -50,16 +50,6 @@ export function MobileNav() {
       aria-label="Primary"
       className="glass fixed inset-x-0 bottom-0 z-40 border-t pb-safe lg:hidden"
     >
-      {/* Center FAB — anchored to the nav itself so it stays perfectly centered */}
-      <button
-        type="button"
-        onClick={() => openEditor(null)}
-        aria-label="Create new prompt"
-        className="brand-gradient absolute -top-6 left-1/2 z-10 flex size-14 -translate-x-1/2 items-center justify-center rounded-full text-white shadow-lg shadow-primary/40 ring-4 ring-background transition-transform hover:scale-105 active:scale-95"
-      >
-        <Plus className="size-6" strokeWidth={2.4} aria-hidden="true" />
-      </button>
-
       <div className="grid h-16 grid-cols-6">
         {item(filter === "all", () => setFilter("all"), <Library className="size-5" />, "Prompts")}
         {item(
@@ -70,13 +60,7 @@ export function MobileNav() {
           favorites.length
         )}
 
-        {/* spacer under the FAB — mirrors item() structure (icon slot + gap + label)
-            so "New" sits at exactly the same height as the other labels,
-            with the FAB overlapping the reserved icon slot */}
-        <div className="flex h-full flex-col items-center justify-center gap-0.5" aria-hidden="true">
-          <span className="size-5" />
-          <span className="text-[10px] leading-none font-medium text-muted-foreground">New</span>
-        </div>
+        {item(false, () => openEditor(null), <Plus className="size-5" />, "New")}
 
         {item(false, () => setCollectionsOpen(true), <BookOpen className="size-5" />, "Sets", collections.length)}
         {item(false, () => setTemplatesOpen(true), <Sparkles className="size-5" />, "Templates")}

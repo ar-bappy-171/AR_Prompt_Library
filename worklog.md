@@ -68,3 +68,18 @@ Work Log:
 Stage Summary:
 - Mobile bottom-nav "New" slot fixed: label baseline now pixel-identical to all other nav labels, and the floating + FAB visually connects to its label with the same 2px gap rhythm as icon→label in sibling items (verified numerically via getBoundingClientRect and visually via screenshots on mobile 390x844 and desktop 1440x900).
 - No other files touched; hydration warning confirmed as stale console history, not a code issue.
+
+---
+Task ID: 5
+Agent: Z.ai Code (main)
+Task: User follow-up — remove the big floating "+" FAB from the mobile bottom nav; the "New" item must look exactly like the other nav icons on both mobile and PC.
+
+Work Log:
+- Removed the absolutely-positioned brand-gradient FAB (size-14 circle, -top-6) from mobile-nav.tsx entirely.
+- Replaced the "New" spacer with a real nav item via the shared item() helper: {item(false, () => openEditor(null), <Plus className="size-5" />, "New")} — same 20x20 icon, same label style, same tap target as Prompts/Favorites/Sets/Templates/Stats.
+- Agent Browser verification (390x844): all 6 nav items measure identical — svg icons 20x20 @y796, labels @y818; clicked "New" → "New prompt" editor dialog opens; dialog closes cleanly.
+- Desktop 1440x900: nav[aria-label=Primary] display:none (bottom bar is mobile-only; PC keeps normal-sized "New Prompt" sidebar button and "+ New" topbar button — no big icon anywhere on PC).
+- `bun run lint` clean; dev.log shows clean compiles and 200s.
+
+Stage Summary:
+- Mobile bottom nav is now 6 uniform items (Prompts · Favorites · New · Sets · Templates · Stats) with no oversized FAB; "New" opens the editor like before. PC view unchanged and has no bottom bar by design.
