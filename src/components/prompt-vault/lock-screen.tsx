@@ -45,7 +45,8 @@ export function LockScreen() {
 
   const backspace = () => setPin((p) => p.slice(0, -1));
 
-  /* physical keyboard support */
+  /* physical keyboard support (re-register when `error` flips so the
+     fresh handler doesn't keep the stale error=true closure) */
   React.useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (/^[0-9]$/.test(e.key)) press(e.key);
@@ -54,7 +55,7 @@ export function LockScreen() {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [pin, submit]);
+  }, [pin, submit, error]);
 
   return (
     <div

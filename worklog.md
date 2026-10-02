@@ -25,3 +25,30 @@ Stage Summary:
 - Responsive: desktop sidebar layout (lg+), mobile top bar + filter chips + bottom nav with center FAB; dialogs scroll on small screens; safe-area aware; sticky footer per layout rules.
 - All original core features preserved (CRUD, categories incl. custom, tags, ratings, images, favorites, search, sorts incl. drag custom order, grid/list, pagination, analytics, templates, bulk select, undo/redo, import/export, sample data, themes, shortcuts); dropped niche diff/comparison + subcategories from the original.
 - Verified in real browser at both breakpoints; zero runtime errors on fresh sessions; lint clean.
+
+---
+Task ID: 2
+Agent: Z.ai Code (main agent)
+Task: Implement the 4 user-selected feature upgrades (#8 Collections/Playbooks, #12 PIN Lock/Privacy Mode, #13 Installable PWA with own icon+badge, #19 Card Cover Images) plus app icon & badge identity.
+
+Work Log:
+- Context recovery: previous session had already written most feature code (types/store/collections dialogs/lock-screen/security-dialog/prompt-cover-card/pwa.tsx/manifest/sw.js/icons) but had not verified anything end-to-end; dev.log showed a topbar "view defined multiple times" error that had already been resolved mid-session (verified current file is clean).
+- Verified integration wiring across shell: sidebar Collections+Privacy Lock nav, topbar lock/shield buttons + Cover view toggle, mobile-nav "Sets" entry with count badge, prompt card & details "Add to collection" actions, globals.css brand-gradient/animate-shake/animate-in-item utilities, data.ts COLLECTION_COLORS.
+- PWA assets audit: all icons present (32/192/512/apple-touch) but icon-maskable-512.png was actually 614x614 while manifest declares 512x512 — regenerated to a true 512x512 with content inside the maskable safe zone using sharp.
+- Agent Browser E2E (desktop 1440x900): fresh-state empty vault → load samples (6 prompts) → Collections: create "Blog workflow" (name/desc/color), open detail, add 3 prompts via picker, drag-reorder steps (order change verified via DOM), Copy all → "Playbook copied · 3 prompts as one ordered block" toast + "Copied!" button state; also verified Add-to-collection from card menu and from details dialog (toggle on/off both directions, persisted count).
+- PIN Lock E2E: set PIN+hint → topbar shows quick-lock; Lock now → full-screen gate with keypad/dots/hint; wrong PIN rejected ("Wrong PIN — try again"); keypad unlock; keyboard unlock; auto-lock on tab switch (visibilitychange) verified via real second tab; remove lock with current PIN.
+- BUG FOUND & FIXED (lock-screen.tsx): after a wrong-PIN attempt the physical-keyboard handler kept a stale error=true closure (effect deps missing `error`) so keyboard input was permanently ignored until re-render; added `error` to the effect deps and re-verified wrong-PIN → keyboard entry → Enter unlock works.
+- PWA E2E: SW ACTIVE (prompt-vault-v3, 34 cached entries), manifest served as application/manifest+json with correct icons/shortcuts/theme, DOM icon links (32/192/512/apple-touch) + theme-color + apple-web-app metas; footer shows the app's own icon + "v2.1" badge; OFFLINE test: set offline → reload → app fully renders 6 cards from SW cache.
+- Cover view E2E: 3-way view toggle (grid/cover/list); cover cards render category-colored gradient fallback + quote icon when imageless; added a real image to "Fantasy Landscape Generator" via editor URL-import (converted to dataURL) → image-first cover renders with title-over-scrim; verified on desktop and mobile.
+- Mobile E2E (390x844): 2-row topbar, filter chips, cover cards, bottom nav with Sets badge, sticky footer with icon+badge (footer top 667 < 844 viewport), full lock-screen keypad usable, mobile auto-lock + unlock.
+- Mobile UX GAP FOUND & FIXED (topbar.tsx): once a PIN existed, mobile had no path to security settings (change/remove PIN) because the shield button was replaced by quick-lock and the sidebar is desktop-only; changed mobile identity row to ALWAYS show shield (opens manage dialog with Lock now / Change / Remove) — fits narrow phones (4 buttons), desktop quick-lock unchanged.
+- PWA manifest shortcuts E2E: /?action=new opens editor, /?action=collections opens Collections dialog.
+- Regression checks: lint clean; fresh-reload console shows 0 errors (earlier hydration warning traced to stale console history + the already-fixed topbar dup); desktop+mobile screenshots confirm layout.
+- Cleanup: removed public/test-cover.jpg, neutralized+cleared test localStorage (auto-lock listener suppressed during teardown so persisted state can't resurrect), confirmed user starts with default empty vault (0 prompts, 0 collections, no PIN, grid view).
+- This worklog.
+
+Stage Summary:
+- All 4 selected features are implemented, wired, and browser-verified on desktop + mobile: #8 Collections (ordered playbooks, drag-reorder, one-click copy-all, 3 entry points), #12 PIN Lock (set/change/remove, auto-lock on hide, full-screen keypad gate, keyboard+touch), #13 PWA (installable, manifest+maskable icon+shortcuts, offline via SW, own icon & v2.1 badge in footer), #19 Cover view (image-first cards with gradient fallback).
+- 2 real defects fixed during verification: lock-screen stale-closure keyboard bug; mobile unreachable security settings after PIN setup.
+- App identity: custom purple-vault icon set (32/192/512/maskable/apple-touch), manifest theme #7c3aed, footer icon + v2.1 badge — the "server has its own icon and badge" requirement.
+- User starts clean: empty-vault onboarding with sample loader.

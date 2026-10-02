@@ -91,30 +91,18 @@ export function Topbar() {
         </h1>
         <div className="ml-auto flex items-center gap-1">
           <UndoRedoButtons undo={undo} redo={redo} past={past} future={future} compact />
-          {hasPin && (
-            <Button
-              variant="ghost"
-              size="iconSm"
-              className="size-9 text-muted-foreground hover:text-foreground lg:size-8"
-              onClick={lock}
-              aria-label="Lock vault now"
-              title="Lock now"
-            >
-              <Lock className="size-4" />
-            </Button>
-          )}
-          {!hasPin && (
-            <Button
-              variant="ghost"
-              size="iconSm"
-              className="size-9 text-muted-foreground hover:text-foreground lg:size-8"
-              onClick={() => setSecurityOpen(true)}
-              aria-label="Privacy lock settings"
-              title="Privacy lock"
-            >
-              <ShieldCheck className="size-4" />
-            </Button>
-          )}
+          {/* settings entry — always reachable on mobile (sidebar is desktop-only);
+              quick "Lock now" lives inside the dialog */}
+          <Button
+            variant="ghost"
+            size="iconSm"
+            className="size-9 text-muted-foreground hover:text-foreground lg:hidden"
+            onClick={() => setSecurityOpen(true)}
+            aria-label="Privacy lock settings"
+            title="Privacy lock"
+          >
+            <ShieldCheck className="size-4" />
+          </Button>
           <ThemeToggle />
         </div>
       </div>
